@@ -2,20 +2,22 @@
 
 Leonardo Henrique is a Brazilian data scientist, who uses different popular media service apis to create useable data sets for competitions, work, and play. The Top 50 Songs on Spotify data set is a comma seperated value file containing the following meta data:
 
-ID - Signed Integer
-Track.Name - String
-Artist.Name - String
-Genre - String
-Beats.Per.Minute - Integer
-Energy - Integer
-Danceability - Integer
-Loudness in dB - Signed Integer
-Liveness - Integer
-Valence - Integer
-Length (s) - Integer
-Acousticness - Integer
-Speechiness - Integer
-Popularity - Integer
+<ul>
+  <li>ID - Signed Integer</li>
+  <li>Track.Name - String</li>
+  <li>Artist.Name - String</li>
+  <li>Genre - String</li>
+  <li>Beats.Per.Minute - Integer</li>
+  <li>Energy - Integer</li>
+  <li>Danceability - Integer</li>
+  <li>Loudness in dB - Signed Integer</li>
+  <li>Liveness - Integer</li>
+  <li>Valence - Integer</li>
+  <li>Length (s) - Integer</li>
+  <li>Acousticness - Integer</li>
+  <li>Speechiness - Integer</li>
+  <li>Popularity - Integer</li>
+</ul>
 
 ## Two relational databases are constructed using this data.
 
