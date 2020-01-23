@@ -27,5 +27,13 @@ Popularity - Integer
   <li>Length</li>
 </ol>
 
+### Second RDB
+<ol>
+  <li>ID</li>
+  <li>Genre</li>
+  <li>Loudness</li>
+  <li>Danceability</li>
+</ol>
+
 <a id="1">[1]</a>
 Henrique, L. Top 50 Spotify Songs - 2019. https://kaggle.com/leonardopena/top50spotify2019. Accessed 23 Jan. 2020.
