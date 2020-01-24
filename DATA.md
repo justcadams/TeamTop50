@@ -45,5 +45,7 @@ Leonardo Henrique is a Brazilian data scientist, who uses different popular medi
 
 Note: The ID in the Song database matches the ID in the Genre database. This is what makes the two databases relational.
 
+# Bibliography
+
 <a id="1">[1]</a>
 Henrique, L. Top 50 Spotify Songs - 2019. https://kaggle.com/leonardopena/top50spotify2019. Accessed 23 Jan. 2020.
