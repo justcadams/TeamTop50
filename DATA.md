@@ -6,7 +6,7 @@ The CL API requires two relational databases with a common theme from a single d
 
 # Data Set - Top 50 Spotify Songs 2019
 
-Leonardo Henrique is a Brazilian data scientist, who uses different popular media service apis to create useable data sets for competitions, work, and play. The Top 50 Songs on Spotify data set is a comma seperated value file containing the following meta data:
+Leonardo Henrique is a Brazilian data scientist, who uses different popular media service APIs to create useable data sets for competitions, work, and play. The Top 50 Songs on Spotify data set is a comma seperated value file containing the following meta data:
 
 <ul>
   <li>ID - Signed Integer</li>
