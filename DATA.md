@@ -21,7 +21,7 @@ Leonardo Henrique is a Brazilian data scientist, who uses different popular medi
 
 ## Two relational databases are constructed using this data.
 
-### First RDB
+### First RDB - Song
 <ol>
   <li>ID</li>
   <li>Track.Name</li>
@@ -29,7 +29,7 @@ Leonardo Henrique is a Brazilian data scientist, who uses different popular medi
   <li>Length</li>
 </ol>
 
-### Second RDB
+### Second RDB - Genre
 <ol>
   <li>ID</li>
   <li>Genre</li>
