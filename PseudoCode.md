@@ -18,6 +18,6 @@
   <li>Function: Create a database.</li>
     <ul>
       <li>createDatabase(String databaseName)</li>
-      <li>Function: createDatabase(String filename, String databaseName)</li>
+      <li>createDatabase(String filename, String databaseName)</li>
     </ul>
 </ol>
