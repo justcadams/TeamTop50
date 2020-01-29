@@ -6,3 +6,9 @@
 
 ## Back End
 
+<ol>
+  <li>Function: Connect to a server.</li>
+    <ul>
+      <li>connectToServer(String filename)</li>
+    </ul>
+</ol>
