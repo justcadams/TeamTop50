@@ -20,7 +20,7 @@ class Tree():
         if type(rc) is Tree:
             self.rc = rc
         else: 
-            self.lc = Tree(rc)
+            self.rc = Tree(rc)
 
     def isLeaf(self):
         # Checks if this Tree has any children
@@ -49,5 +49,5 @@ class Tree():
         else:
             lc = str(self.lc)
 
-        return "<" + self.data + ", <" + lc + ", " + rc + ">"
+        return "<" + self.data + ": <" + lc + ", " + rc + ">>"
 
