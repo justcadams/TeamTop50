@@ -6,5 +6,5 @@ def main():
     print(result)
 
 def search():
-    input = raw_input("Search: ")
+    input = input("Search: ")
     return input
