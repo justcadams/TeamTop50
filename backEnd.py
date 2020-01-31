@@ -1,6 +1,7 @@
 # Import sqlite3 tool.
 import os
 import sqlite3
+import re
 from sqlite3 import Error
 from urllib.request import pathname2url
 
@@ -121,7 +122,36 @@ class SQLBackEnd:
 		
 		def deleteDatabase(self,databaseName):
 
+		def createTable(self,tableName):
+			regexCheck = False
+			if(regexCheck):
+				print("Hacking attempt detected. Ignoring user input.")
+			else:
+				if(type(tableName) == str):
+					print("Creating table.")
+					self.databaseConnection.execute("CREATE TABLE " + tableName + "(rowID INTEGER PRIMARY KEY ASC)")
+				else:
+					print("Table name is not a valid type.")
 
+		def createTable(self,tableName,columnNames,columnDataTypes):
+			regexCheck = False
+			if(regexCheck):
+				print("Hacking attempt detected. Ignoring user input.")
+			else:				
+				if(len(columnNames) == len(columnDataTypes)):
+					print("Creating table.")
+					SQLString = "CREATE TABLE " + tableName + "("
+					for i in range(len(columnNames)):
+						SQLString += columnnNames[i] + " " + columnnDataTypes[i] + ", "
+					SQLString += ");"
+				self.databaseConnection.execute(SQLString)
+
+		def createRows(self,tableName,columnnNames,rowData):
+			regexCheck = False
+			if(regexCheck):
+				print("Hacking attempt detected. Ignoring user input.")
+			else:
+				print("Inserting rows.")
 
 
 # Establish a connection to a local database.
@@ -131,7 +161,7 @@ conn = sqlite3.connect('test.db')
 c = conn.cursor()
 
 # Delete the table if it exists
-c.execute(IF EXISTS(SELECT 1 FROM INFORMATION_SCHEMA.TABLES WHERE TABLE_TYPE='test' AND TABLE_NAME='stocks') ELSE(DROP TABLE stocks))
+c.execute("IF EXISTS(SELECT 1 FROM INFORMATION_SCHEMA.TABLES WHERE TABLE_TYPE='test' AND TABLE_NAME='stocks') ELSE(DROP TABLE stocks)")
 
 # Create a table named stocks
 c.execute("IF NOT EXISTS(SELECT * from stocks) CREATE TABLE stocks (Date VARCHAR(10), Action VARCHAR(4), Ticker VARCHAR(4), Quantity INTEGER, Price Double)")
