@@ -58,7 +58,7 @@ class SQLBackEnd:
 		def disconnectFromServer(self,listLocation):
 			sqlite3.disconnect(self.databaseConnection[listLocation][1])
 
-		def createDatabase(self, databaseName):
+		def createDatabase(self, databaseName, filename):
 			# TODO: Mount remote file system.
 			db_exists = os.path.exists(databaseName)
 			# TODO: Create the database if it does not exist.
