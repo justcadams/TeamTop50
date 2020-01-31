@@ -161,7 +161,7 @@ class SQLBackEnd:
 					break
 		
 		def deleteDatabase(self,databaseName):
-			self.currentThread.execute("DROP " + databaseName)
+			self.currentThread.execute("DROP DATABASE " + databaseName)
 			self.currentThread.commit()
 
 
