@@ -1,4 +1,4 @@
-# Import sqlite3 tool.
+# Import sqlite3 and relevant tools.
 import os
 import sqlite3
 import re
@@ -8,8 +8,11 @@ from urllib.request import pathname2url
 class SQLBackEnd:
 	# databaseConnection contains a tuple with the sqlite3 connection object first and the filename string object second.
 	def __init__(self):
+		# Field to maintain multiple connections.
 		self.databaseConnection = list()
+		# Field to identify the current server this terminal is interfacing with.
 		self.currentConnection
+		# Field to store the current location of this terminal's cursor.
 		self.currentThread
 		
 		def connectToServer(self, filename):
@@ -20,16 +23,29 @@ class SQLBackEnd:
 		        # Print database connection status.
 		        print(newConnection.sqlite3_status())
 		        # Store connection and filename for later reference.
-				databaseConnection.append(tuple((newConnection,filename)))
+				self.databaseConnection.append(tuple((newConnection,filename)))
+				# Update current connection if the server connects with this terminal.
 				self.currentConnection = newConnection
-				self.currentThread = newConnection.cursor()
+				# Update current terminal to reflect the current cursor location.
+				self.currentTerminal = newConnection.cursor()
 		    except Error as e:
+		    	# If there is an error print out the error to the log.
 		        print(e)
 		    finally:
-		        if newConnection:
-		            newConnection.close()
+		    	# If the connection produces an error, then disconnect to ensure this terminal does not damage the server.
+	            self.databaseConnection[-1][0].close()
+	            # Delete the newConnection to ensure access to the failed connection is disallowed.
+	            self.databaseConnection.pop()
 
-		def displayConnections:
+        def changeConnection(self,connectionNumber):
+        	# Ensure the connection this terminal is changing to is within the range of available server connections.
+        	if(connectionNumber > -1 and connectionNumber < len(self.databaseConnection))
+        		# Update the current connection to reflect this terminal's selection.
+        	  	self.currentConnection = databaseConnection[connectionNumber]
+        	  	# Update the location of this terminal's cursor.
+        		self.currentTerminal = self.currentConnection.cursor()
+
+		def displayConnections(self):
 			for conn in self.databaseConnection:
 				print("Connection " + conn[0] + " at " conn[1] ".")
 		
@@ -46,41 +62,49 @@ class SQLBackEnd:
 				print("Database " + databaseName + "already exists.")
 				# Ask the user if they would like to overwrite the current database.
 				userResponse = input("Would you like to overwrite this database? Y/N: ")
-				if userResponse:					
-					try:
-						# Attempt to connect to localhost.
-						newConnection = sqlite3.connect(filename)
-				        # Print database connection status.
-				        print(newConnection.sqlite3_status())
-				        # Store connection and filename for later reference.
-						databaseConnection.append(tuple((newConnection,filename)))
-				    except Error as e:
-				        print(e)
-				    finally:
-				        if newConnection:
-				            newConnection.close()
+				regexCheck = False
+				if userResponse:
+					print("Hacking attempt detected. Ignoring user input.")
 				else:
-					break
+					if (userResponse == 'Y' or userResponse == 'y'):					
+						try:
+							# Attempt to connect to localhost.
+							newConnection = sqlite3.connect(filename)
+					        # Print database connection status.
+					        print(newConnection.sqlite3_status())
+					        # Store connection and filename for later reference.
+							databaseConnection.append(tuple((newConnection,filename)))
+					    except Error as e:
+					        print(e)
+					    finally:
+					        if newConnection:
+					            newConnection.close()
+					else:
+						break
 			else:
 				# Let the user know that the database does not exist.
 				print("No database exists in the present schema.")
 				# Ask the user if they would like to overwrite the current database.
 				userResponse = input("Would you like to overwrite this database? Y/N: ")
-				if userResponse:					
-					try:
-						# Attempt to connect to localhost.
-						newConnection = sqlite3.connect(filename)
-				        # Print database connection status.
-				        print(newConnection.sqlite3_status())
-				        # Store connection and filename for later reference.
-						databaseConnection.append(tuple((newConnection,filename)))
-				    except Error as e:
-				        print(e)
-				    finally:
-				        if newConnection:
-				            newConnection.close()
+				regexCheck = False
+				if regexCheck:
+					print("Hacking attempt detected. Ignoring user input.")
 				else:
-					break
+					if(userResponse == 'Y' or userResponse == 'y'):
+						try:
+							# Attempt to connect to localhost.
+							newConnection = sqlite3.connect(filename)
+					        # Print database connection status.
+					        print(newConnection.sqlite3_status())
+					        # Store connection and filename for later reference.
+							databaseConnection.append(tuple((newConnection,filename)))
+					    except Error as e:
+					        print(e)
+					    finally:
+					        if newConnection:
+					            newConnection.close()
+					else:
+						break
 		
 		def createDatabase(self, filename, databaseName):
 			# TODO: Mount remote file system.
@@ -153,6 +177,7 @@ class SQLBackEnd:
 						SQLString += columnnNames[i] + " " + columnnDataTypes[i] + ", "
 					SQLString += ");"
 				self.databaseConnection.execute(SQLString)
+				self.currentThread
 
 		def createRows(self,tableName,columnnNames,rowData):
 			regexCheck = False
@@ -160,6 +185,7 @@ class SQLBackEnd:
 				print("Hacking attempt detected. Ignoring user input.")
 			else:
 				print("Inserting rows.")
+
 
 
 # Establish a connection to a local database.
