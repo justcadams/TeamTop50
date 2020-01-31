@@ -13,8 +13,12 @@ class SQLBackEnd:
 		# Field to identify the current server this terminal is interfacing with.
 		self.currentConnection
 		# Field to store the current location of this terminal's cursor.
-		self.currentThread
+		self.currentTerminal
 		
+		# Requires: String filename - The name of the file or URI for the virtual server / distant server.
+		# Modifies: list(tuple(Object, filename)) databaseConnection - List containing the relevant server connection information.
+		# Effects: Creates a server connection and stores the relevant information. 
+
 		def connectToServer(self, filename):
 			# TODO: Mount remote file system.
 			try:
@@ -46,7 +50,9 @@ class SQLBackEnd:
         		self.currentTerminal = self.currentConnection.cursor()
 
 		def displayConnections(self):
+			# Select all of the objects in the database connection list.
 			for conn in self.databaseConnection:
+				# Print out the connection uri and the filename.
 				print("Connection " + conn[0] + " at " conn[1] ".")
 		
 		def disconnectFromServer(self,listLocation):
@@ -63,7 +69,7 @@ class SQLBackEnd:
 				# Ask the user if they would like to overwrite the current database.
 				userResponse = input("Would you like to overwrite this database? Y/N: ")
 				regexCheck = False
-				if userResponse:
+				if regexCheck:
 					print("Hacking attempt detected. Ignoring user input.")
 				else:
 					if (userResponse == 'Y' or userResponse == 'y'):					
@@ -153,6 +159,9 @@ class SQLBackEnd:
 					break
 		
 		def deleteDatabase(self,databaseName):
+			self.currentThread.execute("DROP " + databaseName)
+			self.currentThread.commit()
+
 
 		def createTable(self,tableName):
 			regexCheck = False
