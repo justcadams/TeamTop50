@@ -9,6 +9,8 @@ class SQLBackEnd:
 	# databaseConnection contains a tuple with the sqlite3 connection object first and the filename string object second.
 	def __init__(self):
 		self.databaseConnection = list()
+		self.currentConnection
+		self.currentThread
 		
 		def connectToServer(self, filename):
 			# TODO: Mount remote file system.
@@ -19,11 +21,17 @@ class SQLBackEnd:
 		        print(newConnection.sqlite3_status())
 		        # Store connection and filename for later reference.
 				databaseConnection.append(tuple((newConnection,filename)))
+				self.currentConnection = newConnection
+				self.currentThread = newConnection.cursor()
 		    except Error as e:
 		        print(e)
 		    finally:
 		        if newConnection:
 		            newConnection.close()
+
+		def displayConnections:
+			for conn in self.databaseConnection:
+				print("Connection " + conn[0] + " at " conn[1] ".")
 		
 		def disconnectFromServer(self,listLocation):
 			sqlite3.disconnect(self.databaseConnection[listLocation][1])
