@@ -1,3 +1,4 @@
+from testCommands import *
 
 # Binary tree for constructing and executing query commands
 class Tree():
@@ -8,16 +9,16 @@ class Tree():
         self.rc = None
         self.lc = None
 
-    def addLeftChild(self, lc):
+    def setLeftChild(self, lc):
         # Adds a left child. lc can either be another tree or data.
-        if type(lc) is Tree:
+        if isinstance(lc, Tree):
             self.lc = lc
         else: 
             self.lc = Tree(lc)
 
-    def addRightChild(self, rc):
-        # Adds a right child. rc can either be another tree or data.
-        if type(rc) is Tree:
+    def setRightChild(self, rc):
+        # Sets a right child. rc can either be another tree or data.
+        if isinstance(rc, Tree):
             self.rc = rc
         else: 
             self.rc = Tree(rc)
@@ -30,11 +31,23 @@ class Tree():
         # TODO
         # Evaluates value of tree by carrying out operations and 
         # doing database queries; this is where backend should connect
-        pass
+        if self.isLeaf():
+            return self.data
+        else:
+            if self.data == "artist":
+                return getArtist(self.rc.evaluate())
+            elif self.data == "length":
+                return getLength(self.rc.evaluate())
+            elif self.data == "tempo":
+                return getTempo(self.rc.evaluate())
+            elif self.data == "popularity":
+                return getPopularity(self.rc.evaluate())
+            else:
+                return "ERROR"
 
     def __str__(self):
         # Prints a Tree (for debugging use)
-        # Format: <data, <lc, rc>>
+        # Format: <data: lc, rc>
         # If a child is None, default value is _
         if self.isLeaf():
             return self.data
@@ -49,5 +62,5 @@ class Tree():
         else:
             lc = str(self.lc)
 
-        return "<" + self.data + ": <" + lc + ", " + rc + ">>"
+        return "<" + self.data + ": " + lc + ", " + rc + ">"
 
