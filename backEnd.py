@@ -1,7 +1,7 @@
 # Import sqlite3 and relevant tools.
 import os
 import sqlite3
-import re
+import regex
 from sqlite3 import Error
 from urllib.request import pathname2url
 
@@ -24,8 +24,8 @@ class SQLBackEnd:
 			try:
 				# Attempt to connect to localhost.
 				newConnection = sqlite3.connect(filename)
-		        # Print database connection status.
-		        print(newConnection.sqlite3_status())
+				# Print database connection status.
+				print(newConnection.sqlite3_status())
 		        # Store connection and filename for later reference.
 				self.databaseConnection.append(tuple((newConnection,filename)))
 				# Update current connection if the server connects with this terminal.
@@ -79,12 +79,14 @@ class SQLBackEnd:
 					        # Print database connection status.
 					        print(newConnection.sqlite3_status())
 					        # Store connection and filename for later reference.
-							databaseConnection.append(tuple((newConnection,filename)))
+							self.databaseConnection.append(tuple((newConnection,filename)))
 					    except Error as e:
+					    	# Print out the error if the connection produces one.
 					        print(e)
 					    finally:
-					        if newConnection:
-					            newConnection.close()
+					    	# 
+					        if self.databaseConnection[-1][0]:
+					            self.databaseConnection[-1][0].close()
 					else:
 						break
 			else:
