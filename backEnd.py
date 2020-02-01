@@ -19,7 +19,7 @@ class SQLBackEnd:
 		# Modifies: list(tuple(Object, filename)) databaseConnection - List containing the relevant server connection information.
 		# Effects: Creates a server connection and stores the relevant information. 
 
-		def connectToServer(self, filename):
+		def connectToServer(self,filename):
 			# TODO: Mount remote file system.
 			try:
 				# Attempt to connect to localhost.
@@ -58,7 +58,7 @@ class SQLBackEnd:
 		def disconnectFromServer(self,listLocation):
 			sqlite3.disconnect(self.databaseConnection[listLocation][1])
 
-		def createDatabase(self, databaseName, filename):
+		def createDatabase(self,databaseName):
 			# TODO: Mount remote file system.
 			db_exists = os.path.exists(databaseName)
 			# TODO: Create the database if it does not exist.
@@ -159,11 +159,6 @@ class SQLBackEnd:
 				            newConnection.close()
 				else:
 					break
-		
-		def deleteDatabase(self,databaseName):
-			self.currentThread.execute("DROP DATABASE " + databaseName)
-			self.currentThread.commit()
-
 
 		def createTable(self,tableName):
 			regexCheck = False
@@ -172,7 +167,8 @@ class SQLBackEnd:
 			else:
 				if(type(tableName) == str):
 					print("Creating table.")
-					self.databaseConnection.execute("CREATE TABLE " + tableName + "(rowID INTEGER PRIMARY KEY ASC)")
+					self.currentThread.execute("CREATE TABLE " + tableName + "(rowID INTEGER PRIMARY KEY ASC)")
+					self.currentThread.commit()
 				else:
 					print("Table name is not a valid type.")
 
@@ -187,8 +183,8 @@ class SQLBackEnd:
 					for i in range(len(columnNames)):
 						SQLString += columnnNames[i] + " " + columnnDataTypes[i] + ", "
 					SQLString += ");"
-				self.databaseConnection.execute(SQLString)
-				self.currentThread
+				self.currentThread.execute(SQLString)
+				self.currentThread.commit()
 
 		def createRows(self,tableName,columnnNames,rowData):
 			regexCheck = False
@@ -196,6 +192,40 @@ class SQLBackEnd:
 				print("Hacking attempt detected. Ignoring user input.")
 			else:
 				print("Inserting rows.")
+
+		def deleteDatabase(self,databaseName):
+			self.currentThread.execute("DROP DATABASE " + databaseName + ";")
+			confirm = input("Are you sure you want to delete " + databaseName + "? Y/N: ")
+			if(confirm == 'Y' or confirm == 'y'):
+				self.currentThread.commit()
+			else:
+				self.currentThread.rollback()
+
+		def deleteTable(self,databaseName,tableName):
+			self.currentThread.execute("DROP TABLE " + databaseName + "." + tableName + ";")
+			confirm = input("Are you sure you want to delete " + tableName + " from " + databaseName + "? Y/N: ")
+			if(confirm == 'Y' or confirm == 'y'):
+				self.currentThread.commit()
+			else:
+				self.currentThread.rollback()
+
+		def deleteColumn(self,databaseName,tableName,columnName):
+			self.currentThread.execute("ALTER TABLE " + databaseName + "." + tableName + " DROP " + columnName + ";")
+			confirm = input("Are you sure you want to delete " + tableName + " from " + databaseName + "? Y/N: ")
+			if(confirm == 'Y' or confirm == 'y'):
+				self.currentThread.commit()
+			else:
+				self.currentThread.rollback()
+
+		def deleteRow(self, databaseName,tableName,columnName,conditionString):
+			self.currentThread.execute("DELTE FROM " + databaseName + "." + tableName + " WHERE " + conditionString + ";")
+			confirm = input("Are you sure you want to delete " + tableName + " from " + databaseName + "? Y/N: ")
+			if(confirm == 'Y' or confirm == 'y'):
+				self.currentThread.commit()
+			else:
+				self.currentThread.rollback()
+
+
 
 # Justin's workspace
 
