@@ -3,62 +3,62 @@ import os
 import sqlite3
 import regex
 from sqlite3 import Error
-from urllib.request import pathname2url
 
 class SQLBackEnd:
 	# databaseConnection contains a tuple with the sqlite3 connection object first and the filename string object second.
-	def __init__(self):
+	def __init__(self,filename):
 		# Field to maintain multiple connections.
-		self.databaseConnection = list()
+		self.databaseConnections = list()
 		# Field to identify the current server this terminal is interfacing with.
 		self.currentConnection
 		# Field to store the current location of this terminal's cursor.
 		self.currentTerminal
-		
+		self.connectToServer(filename)
+
 		# Requires: String filename - The name of the file or URI for the virtual server / distant server.
 		# Modifies: list(tuple(Object, filename)) databaseConnection - List containing the relevant server connection information.
 		# Effects: Creates a server connection and stores the relevant information. 
 
-		def connectToServer(self,filename):
+		def connectToServer(self, filename):
 			# TODO: Mount remote file system.
 			try:
 				# Attempt to connect to localhost.
 				newConnection = sqlite3.connect(filename)
 				# Print database connection status.
 				print(newConnection.sqlite3_status())
-		        # Store connection and filename for later reference.
-				self.databaseConnection.append(tuple((newConnection,filename)))
+				# Store connection and filename for later reference.
+				self.databaseConnections.append(tuple((newConnection,filename)))
 				# Update current connection if the server connects with this terminal.
 				self.currentConnection = newConnection
 				# Update current terminal to reflect the current cursor location.
 				self.currentTerminal = newConnection.cursor()
-		    except Error as e:
-		    	# If there is an error print out the error to the log.
-		        print(e)
-		    finally:
-		    	# If the connection produces an error, then disconnect to ensure this terminal does not damage the server.
-	            self.databaseConnection[-1][0].close()
-	            # Delete the newConnection to ensure access to the failed connection is disallowed.
-	            self.databaseConnection.pop()
+			except Error as e:
+				# If there is an error print out the error to the log.
+				print(e)
+			finally:
+				# If the connection produces an error, then disconnect to ensure this terminal does not damage the server.
+				self.databaseConnection[-1][0].close()
+				# Delete the newConnection to ensure access to the failed connection is disallowed.
+				self.databaseConnection.pop()
 
-        def changeConnection(self,connectionNumber):
-        	# Ensure the connection this terminal is changing to is within the range of available server connections.
-        	if(connectionNumber > -1 and connectionNumber < len(self.databaseConnection))
-        		# Update the current connection to reflect this terminal's selection.
-        	  	self.currentConnection = databaseConnection[connectionNumber]
-        	  	# Update the location of this terminal's cursor.
-        		self.currentTerminal = self.currentConnection.cursor()
+		def changeConnection(self,connectionNumber):
+			# Ensure the connection this terminal is changing to is within the range of available server connections.
+			if(connectionNumber > -1 and connectionNumber < len(self.databaseConnection)):
+				# Update the current connection to reflect this terminal's selection.
+			  	self.currentConnection = databaseConnection[connectionNumber]
+			  	# Update the location of this terminal's cursor.
+				self.currentTerminal = self.currentConnection.cursor()
 
 		def displayConnections(self):
 			# Select all of the objects in the database connection list.
 			for conn in self.databaseConnection:
 				# Print out the connection uri and the filename.
-				print("Connection " + conn[0] + " at " conn[1] ".")
+				print("Connection " + conn[0] + " at " + conn[1] + ".")
 		
 		def disconnectFromServer(self,listLocation):
 			sqlite3.disconnect(self.databaseConnection[listLocation][1])
 
-		def createDatabase(self,databaseName):
+		def createDatabase(self, databaseName, filename):
 			# TODO: Mount remote file system.
 			db_exists = os.path.exists(databaseName)
 			# TODO: Create the database if it does not exist.
@@ -76,19 +76,17 @@ class SQLBackEnd:
 						try:
 							# Attempt to connect to localhost.
 							newConnection = sqlite3.connect(filename)
-					        # Print database connection status.
-					        print(newConnection.sqlite3_status())
-					        # Store connection and filename for later reference.
+							# Print database connection status.
+							print(newConnection.sqlite3_status())
+							# Store connection and filename for later reference.
 							self.databaseConnection.append(tuple((newConnection,filename)))
-					    except Error as e:
-					    	# Print out the error if the connection produces one.
-					        print(e)
-					    finally:
-					    	# 
-					        if self.databaseConnection[-1][0]:
-					            self.databaseConnection[-1][0].close()
-					else:
-						break
+						except Error as e:
+							# Print out the error if the connection produces one.
+							print(e)
+						finally:
+							# 
+							if self.databaseConnection[-1][0]:
+								self.databaseConnection[-1][0].close()
 			else:
 				# Let the user know that the database does not exist.
 				print("No database exists in the present schema.")
@@ -102,17 +100,15 @@ class SQLBackEnd:
 						try:
 							# Attempt to connect to localhost.
 							newConnection = sqlite3.connect(filename)
-					        # Print database connection status.
-					        print(newConnection.sqlite3_status())
-					        # Store connection and filename for later reference.
+							# Print database connection status.
+							print(newConnection.sqlite3_status())
+							# Store connection and filename for later reference.
 							databaseConnection.append(tuple((newConnection,filename)))
-					    except Error as e:
-					        print(e)
-					    finally:
-					        if newConnection:
-					            newConnection.close()
-					else:
-						break
+						except Error as e:
+							print(e)
+						finally:
+							if newConnection:
+								newConnection.close()
 		
 		def createDatabase(self, filename, databaseName):
 			# TODO: Mount remote file system.
@@ -128,17 +124,15 @@ class SQLBackEnd:
 					try:
 						# Attempt to connect to localhost.
 						newConnection = sqlite3.connect(filename)
-				        # Print database connection status.
-				        print(newConnection.sqlite3_status())
-				        # Store connection and filename for later reference.
+						# Print database connection status.
+						print(newConnection.sqlite3_status())
+						# Store connection and filename for later reference.
 						databaseConnection.append(tuple((newConnection,filename)))
-				    except Error as e:
-				        print(e)
-				    finally:
-				        if newConnection:
-				            newConnection.close()
-				else:
-					break
+					except Error as e:
+						print(e)
+					finally:
+						if newConnection:
+							newConnection.close()
 			else:
 				# Let the user know that the database does not exist.
 				print("No database exists in the present schema.")
@@ -148,17 +142,20 @@ class SQLBackEnd:
 					try:
 						# Attempt to connect to localhost.
 						newConnection = sqlite3.connect(filename)
-				        # Print database connection status.
-				        print(newConnection.sqlite3_status())
-				        # Store connection and filename for later reference.
+						# Print database connection status.
+						print(newConnection.sqlite3_status())
+						# Store connection and filename for later reference.
 						databaseConnection.append(tuple((newConnection,filename)))
-				    except Error as e:
-				        print(e)
-				    finally:
-				        if newConnection:
-				            newConnection.close()
-				else:
-					break
+					except Error as e:
+						print(e)
+					finally:
+						if newConnection:
+							newConnection.close()
+		
+		def deleteDatabase(self,databaseName):
+			self.currentThread.execute("DROP " + databaseName)
+			self.currentThread.commit()
+
 
 		def createTable(self,tableName):
 			regexCheck = False
@@ -167,8 +164,7 @@ class SQLBackEnd:
 			else:
 				if(type(tableName) == str):
 					print("Creating table.")
-					self.currentThread.execute("CREATE TABLE " + tableName + "(rowID INTEGER PRIMARY KEY ASC)")
-					self.currentThread.commit()
+					self.databaseConnection.execute("CREATE TABLE " + tableName + "(rowID INTEGER PRIMARY KEY ASC)")
 				else:
 					print("Table name is not a valid type.")
 
@@ -193,65 +189,34 @@ class SQLBackEnd:
 			else:
 				print("Inserting rows.")
 
-		def deleteDatabase(self,databaseName):
-			self.currentThread.execute("DROP DATABASE " + databaseName + ";")
-			confirm = input("Are you sure you want to delete " + databaseName + "? Y/N: ")
-			if(confirm == 'Y' or confirm == 'y'):
-				self.currentThread.commit()
-			else:
-				self.currentThread.rollback()
-
-		def deleteTable(self,databaseName,tableName):
-			self.currentThread.execute("DROP TABLE " + databaseName + "." + tableName + ";")
-			confirm = input("Are you sure you want to delete " + tableName + " from " + databaseName + "? Y/N: ")
-			if(confirm == 'Y' or confirm == 'y'):
-				self.currentThread.commit()
-			else:
-				self.currentThread.rollback()
-
-		def deleteColumn(self,databaseName,tableName,columnName):
-			self.currentThread.execute("ALTER TABLE " + databaseName + "." + tableName + " DROP " + columnName + ";")
-			confirm = input("Are you sure you want to delete " + tableName + " from " + databaseName + "? Y/N: ")
-			if(confirm == 'Y' or confirm == 'y'):
-				self.currentThread.commit()
-			else:
-				self.currentThread.rollback()
-
-		def deleteRow(self, databaseName,tableName,columnName,conditionString):
-			self.currentThread.execute("DELTE FROM " + databaseName + "." + tableName + " WHERE " + conditionString + ";")
-			confirm = input("Are you sure you want to delete " + tableName + " from " + databaseName + "? Y/N: ")
-			if(confirm == 'Y' or confirm == 'y'):
-				self.currentThread.commit()
-			else:
-				self.currentThread.rollback()
-
-
 
 # Justin's workspace
+
+# Testing SQLBackEnd class.
+SQLBackEnd()
 
 # Matt's workspace
 
 
-# Establish a connection to a local database.
-conn = sqlite3.connect('test.db')
+# # Establish a connection to a local database.
 
-# Create a cursor object to execute SQL commands.
-c = conn.cursor()
+# # Create a cursor object to execute SQL commands.
+# c = conn.cursor()
 
-# Delete the table if it exists
-c.execute("IF EXISTS(SELECT 1 FROM INFORMATION_SCHEMA.TABLES WHERE TABLE_TYPE='test' AND TABLE_NAME='stocks') ELSE(DROP TABLE stocks)")
+# # Delete the table if it exists
+# c.execute("IF EXISTS(SELECT 1 FROM INFORMATION_SCHEMA.TABLES WHERE TABLE_TYPE='test' AND TABLE_NAME='stocks') ELSE(DROP TABLE stocks)")
 
-# Create a table named stocks
-c.execute("IF NOT EXISTS(SELECT * from stocks) CREATE TABLE stocks (Date VARCHAR(10), Action VARCHAR(4), Ticker VARCHAR(4), Quantity INTEGER, Price Double)")
+# # Create a table named stocks
+# c.execute("IF NOT EXISTS(SELECT * from stocks) CREATE TABLE stocks (Date VARCHAR(10), Action VARCHAR(4), Ticker VARCHAR(4), Quantity INTEGER, Price Double)")
 
-# Select information from the table
-c.execute("SELECT * FROM stocks")
+# # Select information from the table
+# c.execute("SELECT * FROM stocks")
 
-# Insert a row of data.
-c.execute("INSERT INTO stocks VALUES ('2006-01-05','BUY','RHAT',100,35.14)")
+# # Insert a row of data.
+# c.execute("INSERT INTO stocks VALUES ('2006-01-05','BUY','RHAT',100,35.14)")
 
-# Save (commit) the changes
-conn.commit()
+# # Save (commit) the changes
+# conn.commit()
 
-# Close the connection and verify the system operates as specified.
-conn.close()
+# # Close the connection and verify the system operates as specified.
+# conn.close()
