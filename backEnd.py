@@ -1,7 +1,9 @@
 # Import sqlite3 and relevant tools.
 import os
 import sqlite3
+import psutil
 import regex
+import urllib3
 from sqlite3 import Error
 
 class SQLBackEnd:
@@ -10,117 +12,92 @@ class SQLBackEnd:
 		# Field to maintain multiple connections.
 		self.databaseConnections = list()
 		# Field to identify the current server this terminal is interfacing with.
-		self.currentConnection
+		self.currentConnection = 0
+		# Field to store the current connection location.
+		self.currentConnectionLocation = 0
 		# Field to store the current location of this terminal's cursor.
-		self.currentTerminal
+		self.currentTerminal = 0
+		# Connect to the server specified.
 		self.connectToServer(filename)
 
 		# Requires: String filename - The name of the file or URI for the virtual server / distant server.
 		# Modifies: list(tuple(Object, filename)) databaseConnection - List containing the relevant server connection information.
 		# Effects: Creates a server connection and stores the relevant information. 
 
-		def connectToServer(self, filename):
-			# TODO: Mount remote file system.
-			try:
-				# Attempt to connect to localhost.
-				newConnection = sqlite3.connect(filename)
-				# Print database connection status.
-				print(newConnection.sqlite3_status())
-				# Store connection and filename for later reference.
-				self.databaseConnections.append(tuple((newConnection,filename)))
-				# Update current connection if the server connects with this terminal.
-				self.currentConnection = newConnection
-				# Update current terminal to reflect the current cursor location.
-				self.currentTerminal = newConnection.cursor()
-			except Error as e:
-				# If there is an error print out the error to the log.
-				print(e)
-			finally:
-				# If the connection produces an error, then disconnect to ensure this terminal does not damage the server.
-				self.databaseConnection[-1][0].close()
-				# Delete the newConnection to ensure access to the failed connection is disallowed.
-				self.databaseConnection.pop()
+	def connectToServer(self, filename):
+		# TODO: Mount remote file system.
+		try:
+			# Attempt to connect to localhost.
+			self.newConnection = sqlite3.connect(filename)
+			# Store connection and filename for later reference.
+			self.databaseConnections.append(tuple((self.newConnection,filename)))
+			# Update current connection if the server connects with this terminal.
+			self.currentConnection = self.newConnection
+			# Update current terminal to reflect the current cursor location.
+			self.currentTerminal = self.newConnection.cursor()
+		except Error as e:
+			# If there is an error print out the error to the log.
+			print(e)
 
-		def changeConnection(self,connectionNumber):
-			# Ensure the connection this terminal is changing to is within the range of available server connections.
-			if(connectionNumber > -1 and connectionNumber < len(self.databaseConnection)):
-				# Update the current connection to reflect this terminal's selection.
-			  	self.currentConnection = databaseConnection[connectionNumber]
-			  	# Update the location of this terminal's cursor.
-				self.currentTerminal = self.currentConnection.cursor()
+	def changeConnection(self,connectionNumber):
+		# Ensure the connection this terminal is changing to is within the range of available server connections.
+		if(connectionNumber > -1 and connectionNumber < len(self.databaseConnection)):
+			# Update the current connection to reflect this terminal's selection.
+		  	self.currentConnection = databaseConnection[connectionNumber]
+		  	# Update the location of this terminal's cursor.
+			self.currentTerminal = self.currentConnection.cursor()
 
-		def displayConnections(self):
-			# Select all of the objects in the database connection list.
-			for conn in self.databaseConnection:
-				# Print out the connection uri and the filename.
-				print("Connection " + conn[0] + " at " + conn[1] + ".")
-		
-		def disconnectFromServer(self,listLocation):
-			sqlite3.disconnect(self.databaseConnection[listLocation][1])
+	def displayConnections(self):
+		# Select all of the objects in the database connection list.
+		for conn in self.databaseConnections:
+			# Print out the connection uri and the filename.
+			print("Connection " + str(conn[0]) + " at " + conn[1] + ".")
 
-		def createDatabase(self, databaseName, filename):
-			# TODO: Mount remote file system.
-			db_exists = os.path.exists(databaseName)
-			# TODO: Create the database if it does not exist.
-			# TODO: Ask the user if they want to create the database if it does exist.
-			if db_exists:
-				# Let the user know that the database already exists.
-				print("Database " + databaseName + "already exists.")
-				# Ask the user if they would like to overwrite the current database.
-				userResponse = input("Would you like to overwrite this database? Y/N: ")
-				regexCheck = False
-				if regexCheck:
-					print("Hacking attempt detected. Ignoring user input.")
-				else:
-					if (userResponse == 'Y' or userResponse == 'y'):					
-						try:
-							# Attempt to connect to localhost.
-							newConnection = sqlite3.connect(filename)
-							# Print database connection status.
-							print(newConnection.sqlite3_status())
-							# Store connection and filename for later reference.
-							self.databaseConnection.append(tuple((newConnection,filename)))
-						except Error as e:
-							# Print out the error if the connection produces one.
-							print(e)
-						finally:
-							# 
-							if self.databaseConnection[-1][0]:
-								self.databaseConnection[-1][0].close()
+	def displayCurrentConnection(self):
+		print("Connection " + str(self.currentConnection) + " at " +  )
+	
+	def disconnectFromServer(self,listLocation):
+		sqlite3.disconnect(self.databaseConnection[listLocation][1])
+
+	def createDatabase(self, databaseName, filename):
+		# TODO: Mount remote file system.
+		db_exists = os.path.exists(databaseName)
+		# TODO: Create the database if it does not exist.
+		# TODO: Ask the user if they want to create the database if it does exist.
+		if db_exists:
+			# Let the user know that the database already exists.
+			print("Database " + databaseName + "already exists.")
+			# Ask the user if they would like to overwrite the current database.
+			userResponse = input("Would you like to overwrite this database? Y/N: ")
+			regexCheck = False
+			if regexCheck:
+				print("Hacking attempt detected. Ignoring user input.")
 			else:
-				# Let the user know that the database does not exist.
-				print("No database exists in the present schema.")
-				# Ask the user if they would like to overwrite the current database.
-				userResponse = input("Would you like to overwrite this database? Y/N: ")
-				regexCheck = False
-				if regexCheck:
-					print("Hacking attempt detected. Ignoring user input.")
-				else:
-					if(userResponse == 'Y' or userResponse == 'y'):
-						try:
-							# Attempt to connect to localhost.
-							newConnection = sqlite3.connect(filename)
-							# Print database connection status.
-							print(newConnection.sqlite3_status())
-							# Store connection and filename for later reference.
-							databaseConnection.append(tuple((newConnection,filename)))
-						except Error as e:
-							print(e)
-						finally:
-							if newConnection:
-								newConnection.close()
-		
-		def createDatabase(self, filename, databaseName):
-			# TODO: Mount remote file system.
-			db_exists = os.path.exists(databaseName)
-			# TODO: Create the database if it does not exist.
-			# TODO: Ask the user if they want to create the database if it does exist.
-			if db_exists:
-				# Let the user know that the database already exists.
-				print("Database " + databaseName + "already exists.")
-				# Ask the user if they would like to overwrite the current database.
-				userResponse = input("Would you like to overwrite this database? Y/N: ")
-				if userResponse:					
+				if (userResponse == 'Y' or userResponse == 'y'):					
+					try:
+						# Attempt to connect to localhost.
+						newConnection = sqlite3.connect(filename)
+						# Print database connection status.
+						print(newConnection.sqlite3_status())
+						# Store connection and filename for later reference.
+						self.databaseConnection.append(tuple((newConnection,filename)))
+					except Error as e:
+						# Print out the error if the connection produces one.
+						print(e)
+					finally:
+						# 
+						if self.databaseConnection[-1][0]:
+							self.databaseConnection[-1][0].close()
+		else:
+			# Let the user know that the database does not exist.
+			print("No database exists in the present schema.")
+			# Ask the user if they would like to overwrite the current database.
+			userResponse = input("Would you like to overwrite this database? Y/N: ")
+			regexCheck = False
+			if regexCheck:
+				print("Hacking attempt detected. Ignoring user input.")
+			else:
+				if(userResponse == 'Y' or userResponse == 'y'):
 					try:
 						# Attempt to connect to localhost.
 						newConnection = sqlite3.connect(filename)
@@ -133,72 +110,101 @@ class SQLBackEnd:
 					finally:
 						if newConnection:
 							newConnection.close()
+	
+	def createDatabase(self, filename, databaseName):
+		# TODO: Mount remote file system.
+		db_exists = os.path.exists(databaseName)
+		# TODO: Create the database if it does not exist.
+		# TODO: Ask the user if they want to create the database if it does exist.
+		if db_exists:
+			# Let the user know that the database already exists.
+			print("Database " + databaseName + "already exists.")
+			# Ask the user if they would like to overwrite the current database.
+			userResponse = input("Would you like to overwrite this database? Y/N: ")
+			if userResponse:					
+				try:
+					# Attempt to connect to localhost.
+					newConnection = sqlite3.connect(filename)
+					# Print database connection status.
+					print(newConnection.sqlite3_status())
+					# Store connection and filename for later reference.
+					databaseConnection.append(tuple((newConnection,filename)))
+				except Error as e:
+					print(e)
+				finally:
+					if newConnection:
+						newConnection.close()
+		else:
+			# Let the user know that the database does not exist.
+			print("No database exists in the present schema.")
+			# Ask the user if they would like to overwrite the current database.
+			userResponse = input("Would you like to overwrite this database? Y/N: ")
+			if userResponse:					
+				try:
+					# Attempt to connect to localhost.
+					newConnection = sqlite3.connect(filename)
+					# Print database connection status.
+					print(newConnection.sqlite3_status())
+					# Store connection and filename for later reference.
+					databaseConnection.append(tuple((newConnection,filename)))
+				except Error as e:
+					print(e)
+				finally:
+					if newConnection:
+						newConnection.close()
+	
+	def deleteDatabase(self,databaseName):
+		self.currentThread.execute("DROP " + databaseName)
+		self.currentThread.commit()
+
+
+	def createTable(self,tableName):
+		regexCheck = False
+		if(regexCheck):
+			print("Hacking attempt detected. Ignoring user input.")
+		else:
+			if(type(tableName) == str):
+				print("Creating table.")
+				self.databaseConnection.execute("CREATE TABLE " + tableName + "(rowID INTEGER PRIMARY KEY ASC)")
 			else:
-				# Let the user know that the database does not exist.
-				print("No database exists in the present schema.")
-				# Ask the user if they would like to overwrite the current database.
-				userResponse = input("Would you like to overwrite this database? Y/N: ")
-				if userResponse:					
-					try:
-						# Attempt to connect to localhost.
-						newConnection = sqlite3.connect(filename)
-						# Print database connection status.
-						print(newConnection.sqlite3_status())
-						# Store connection and filename for later reference.
-						databaseConnection.append(tuple((newConnection,filename)))
-					except Error as e:
-						print(e)
-					finally:
-						if newConnection:
-							newConnection.close()
-		
-		def deleteDatabase(self,databaseName):
-			self.currentThread.execute("DROP " + databaseName)
+				print("Table name is not a valid type.")
+
+	def createTable(self,tableName,columnNames,columnDataTypes):
+		regexCheck = False
+		if(regexCheck):
+			print("Hacking attempt detected. Ignoring user input.")
+		else:				
+			if(len(columnNames) == len(columnDataTypes)):
+				print("Creating table.")
+				SQLString = "CREATE TABLE " + tableName + "("
+				for i in range(len(columnNames)):
+					SQLString += columnnNames[i] + " " + columnnDataTypes[i] + ", "
+				SQLString += ");"
+			self.currentThread.execute(SQLString)
 			self.currentThread.commit()
 
-
-		def createTable(self,tableName):
-			regexCheck = False
-			if(regexCheck):
-				print("Hacking attempt detected. Ignoring user input.")
-			else:
-				if(type(tableName) == str):
-					print("Creating table.")
-					self.databaseConnection.execute("CREATE TABLE " + tableName + "(rowID INTEGER PRIMARY KEY ASC)")
-				else:
-					print("Table name is not a valid type.")
-
-		def createTable(self,tableName,columnNames,columnDataTypes):
-			regexCheck = False
-			if(regexCheck):
-				print("Hacking attempt detected. Ignoring user input.")
-			else:				
-				if(len(columnNames) == len(columnDataTypes)):
-					print("Creating table.")
-					SQLString = "CREATE TABLE " + tableName + "("
-					for i in range(len(columnNames)):
-						SQLString += columnnNames[i] + " " + columnnDataTypes[i] + ", "
-					SQLString += ");"
-				self.currentThread.execute(SQLString)
-				self.currentThread.commit()
-
-		def createRows(self,tableName,columnnNames,rowData):
-			regexCheck = False
-			if(regexCheck):
-				print("Hacking attempt detected. Ignoring user input.")
-			else:
-				print("Inserting rows.")
+	def createRows(self,tableName,columnnNames,rowData):
+		regexCheck = False
+		if(regexCheck):
+			print("Hacking attempt detected. Ignoring user input.")
+		else:
+			print("Inserting rows.")
 
 
 # Justin's workspace
 
 # Testing SQLBackEnd class.
-SQLBackEnd()
+virtualServer = SQLBackEnd('test1')
+virtualServer.displayConnections()
+virtualServer.connectToServer('test2')
+virtualServer.changeConnection(0)
+virtualServer.displayConnections()
 
 # Matt's workspace
 
 
 # # Establish a connection to a local database.
+# conn = sqlite3('test.db')
 
 # # Create a cursor object to execute SQL commands.
 # c = conn.cursor()
