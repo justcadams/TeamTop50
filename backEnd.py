@@ -4,6 +4,9 @@ import sqlite3
 import psutil
 import regex
 import urllib3
+import Tkinter as tk
+import pandas as pd
+import tkFileDialog as filedialog
 from sqlite3 import Error
 
 class SQLBackEnd:
@@ -41,9 +44,9 @@ class SQLBackEnd:
 
 	def changeConnection(self,connectionNumber):
 		# Ensure the connection this terminal is changing to is within the range of available server connections.
-		if(connectionNumber > -1 and connectionNumber < len(self.databaseConnection)):
+		if(connectionNumber > -1 and connectionNumber < len(self.databaseConnections)):
 			# Update the current connection to reflect this terminal's selection.
-		  	self.currentConnection = databaseConnection[connectionNumber]
+		  	self.currentConnection = self.databaseConnections[connectionNumber][0]
 		  	# Update the location of this terminal's cursor.
 			self.currentTerminal = self.currentConnection.cursor()
 
@@ -54,7 +57,7 @@ class SQLBackEnd:
 			print("Connection " + str(conn[0]) + " at " + conn[1] + ".")
 
 	def displayCurrentConnection(self):
-		print("Connection " + str(self.currentConnection) + " at " +  )
+		print("Connection " + str(self.currentConnection) + " is selected.")
 	
 	def disconnectFromServer(self,listLocation):
 		sqlite3.disconnect(self.databaseConnection[listLocation][1])
@@ -152,15 +155,48 @@ class SQLBackEnd:
 				finally:
 					if newConnection:
 						newConnection.close()
+
+	def uploadCSV(self):
+		self.currentConnection.text_factory = str
+		root = tk.Tk()
+		root.withdraw()
+		filePath = filedialog.askopenfilename()
+		songs = pd.read_csv(filePath)
+		# dtypes = {'ID': 'INTEGER', 'Track.Name': 'str', 'Artist.Name': 'str', 'Genre': 'str', 'Beats.Per.Minute': 'INTEGER', 'Energy': 'INTEGER', 'Danceability': 'INTEGER', 'Loudness': 'INTEGER', 'Liveness': 'INTEGER', 'Valence': 'INTEGER', 'Length': 'INTEGER', 'Acousticness': 'INTEGER', 'Speechiness': 'INTEGER', 'Popularity': 'INTEGER'}
+		songs.to_sql('TOP50', self.currentConnection, if_exists='append', index = False)
+		self.currentConnection.commit()
 	
 	def deleteDatabase(self,databaseName):
-		self.currentThread.execute("DROP " + databaseName)
-		self.currentThread.commit()
+		if(regexCheck(databaseName)):
+			print("Hacking attempt detected. Ignoring user input.")
+		else:
+			self.currentTerminal.execute("DROP " + databaseName)
+			self.currentTerminal.commit()
+
+	def deleteTable(self, tableName):
+		if(regexCheck(databaseName)):
+			print("Hacking attempt detected. Ignoring user input.")
+		else:
+			self.currentTerminal.execute("DROP TABLE " + tableName)
+			self.currentTerminal.commit()
+
+	def deleteColumn(self, tableName, columnNames):
+		if(regexCheck(databaseName)):
+			print("Hacking attempt detected. Ignoring user input.")
+		else:
+			SQLCommand = "ALTER TABLE " + tableName + " DROP COLUMN "
+			for name in columnNames:
+				if(len(columnNames) == 1):
+					SQLCommand += name
+				else:
+					SQLCommand += ',' + name
+			self.currentTerminal.execute(SQLCommand)
+			self.currentTerminal.commit()
 
 
 	def createTable(self,tableName):
 		regexCheck = False
-		if(regexCheck):
+		if(regexCheck(tableName)):
 			print("Hacking attempt detected. Ignoring user input.")
 		else:
 			if(type(tableName) == str):
@@ -171,7 +207,7 @@ class SQLBackEnd:
 
 	def createTable(self,tableName,columnNames,columnDataTypes):
 		regexCheck = False
-		if(regexCheck):
+		if(regexCheck(tableName + columnnNames + columnDataTypes)):
 			print("Hacking attempt detected. Ignoring user input.")
 		else:				
 			if(len(columnNames) == len(columnDataTypes)):
@@ -180,25 +216,32 @@ class SQLBackEnd:
 				for i in range(len(columnNames)):
 					SQLString += columnnNames[i] + " " + columnnDataTypes[i] + ", "
 				SQLString += ");"
-			self.currentThread.execute(SQLString)
-			self.currentThread.commit()
+			self.currentTerminal.execute(SQLString)
+			self.currentTerminal.commit()
 
 	def createRows(self,tableName,columnnNames,rowData):
-		regexCheck = False
-		if(regexCheck):
+		if(regexCheck(tableName + columnnNames + rowData)):
 			print("Hacking attempt detected. Ignoring user input.")
 		else:
 			print("Inserting rows.")
+
+	def selectAll(self, tableName):
+		databaseString = self.currentTerminal.execute("SELECT * FROM " + tableName)
+		print(databaseString)
 
 
 # Justin's workspace
 
 # Testing SQLBackEnd class.
-virtualServer = SQLBackEnd('test1')
+virtualServer = SQLBackEnd('test1.mdf')
 virtualServer.displayConnections()
-virtualServer.connectToServer('test2')
+virtualServer.connectToServer('test2.mdf')
+virtualServer.connectToServer('test3.mdf')
+virtualServer.displayConnections()
 virtualServer.changeConnection(0)
-virtualServer.displayConnections()
+virtualServer.displayCurrentConnection()
+virtualServer.uploadCSV()
+virtualServer.selectAll('TOP50')
 
 # Matt's workspace
 
