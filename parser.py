@@ -6,8 +6,8 @@ BUZZWORDS = ["of", "by"]
 
 def parse(search):
     array = []
+    word = ""
     for c in search:
-        word = ""
         if c == " ":
             if word in BUZZWORDS:
                 word = ""
@@ -16,6 +16,8 @@ def parse(search):
                 word = ""
         else:
             word += c
+    if word != "":
+        array.append(word)
     return array
 
 

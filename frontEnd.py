@@ -1,10 +1,12 @@
 from parser import *
 
 def main():
-    rtval = search();
+    rtval = search()
     result = parse(rtval)
     print(result)
 
 def search():
-    input = input("Search: ")
-    return input
+    inp = input("Search: ")
+    return inp
+
+main()
