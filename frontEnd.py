@@ -1,12 +1,16 @@
 from parser import *
 
-def main():
-    rtval = search()
-    result = parse(rtval)
-    print(result)
+if __name__ == "__main__":
+    go = True
+    print("Enter command or type 'help'.")
+    while go:
+        query = input("Input: ")
 
-def search():
-    inp = input("Search: ")
-    return inp
-
-main()
+        if query == "help":
+            print("TYPE SOMETHING")
+        elif query == "quit":
+            go = False
+        else:
+            # TODO
+            # Execute command or throw error
+            print("TODO")

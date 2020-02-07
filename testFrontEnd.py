@@ -1,4 +1,5 @@
 from Tree import *
+from parser import *
 
 def testTree():
     tree1 = Tree("testing")
@@ -46,11 +47,33 @@ def testEvaluate():
 
     return passedTest
 
+def testParse():
+    query1 = 'length of "Shape of You"'
+    query2 = 'populary of longest song by "Taylor Swift"'
+
+    tests = [(parse(query1), ['length', "Shape of You"]),
+            (parse(query2), ['popularity', 'longest song', "Taylor Swift"])]
+
+    passedTest = True
+    for n,test in enumerate(tests):
+        output = test[0]
+        expected = test[1]
+        if output != expected:
+            print("parse test #" + str(n+1) + " failed.")
+            print("Output: " + str(output))
+            print("Expected: " + str(expected))
+            passedTest = False
+        else:
+            print("parse test #" + str(n+1) + " passed!")
+
+    return passedTest
 
 allPassed = True
 if not testTree():
     allPassed = False
 if not testEvaluate():
+    allPassed = False
+if not testParse():
     allPassed = False
 
 if allPassed:

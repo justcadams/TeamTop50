@@ -49,7 +49,7 @@ class Tree():
         # Format: <data: lc, rc>
         # If a child is None, default value is _
         if self.isLeaf():
-            return self.data
+            return str(self.data)
 
         if self.rc is None:
             rc = "_"

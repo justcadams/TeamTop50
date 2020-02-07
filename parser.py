@@ -1,32 +1,25 @@
 from Tree import *
+import shlex
 
 BINARY_KEYWORDS = ["compare", "more"]
 BUZZWORDS = ["of", "by"]
 
 
-def parse(search):
-    array = []
-    word = ""
-    for c in search:
-        if c == " ":
-            if word in BUZZWORDS:
-                word = ""
-            else:
-                array.append(word)
-                word = ""
-        else:
-            word += c
-    if word != "":
-        array.append(word)
-    return array
+def parse(query):
+    words = shlex.split(query)
+    for BUZZWORD in BUZZWORDS:
+        words = [word for word in words if word != BUZZWORD]
+    return words
 
 
 def buildTree(array):
+    # Base case is when input array has length 1
+    if len(words) == 1:
+        return Tree(words[0])
     # check if first item in array is unary keyword
-    if array[0] not in BINARY_KEYWORDS:
+    elif array[0] not in BINARY_KEYWORDS:
         newTree = Tree(array[0])
-        array.pop(0)
-        newTree.setRightChild(buildTree(array))
+        newTree.setRightChild(buildTree(array[1:]))
 
     # run else if binary keyword detected as first element in array
     else:
