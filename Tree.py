@@ -28,20 +28,19 @@ class Tree():
         return self.rc is None and self.lc is None
 
     def evaluate(self):
-        # TODO
         # Evaluates value of tree by carrying out operations and 
         # doing database queries; this is where backend should connect
         if self.isLeaf():
             return self.data
         else:
             if self.data == "artist":
-                return getArtist(self.rc.evaluate())
+                return getSongArtist(self.rc.evaluate())
             elif self.data == "length":
-                return getLength(self.rc.evaluate())
+                return getSongLength(self.rc.evaluate())
             elif self.data == "tempo":
-                return getTempo(self.rc.evaluate())
+                return getSongTempo(self.rc.evaluate())
             elif self.data == "popularity":
-                return getPopularity(self.rc.evaluate())
+                return getSongPopularity(self.rc.evaluate())
             else:
                 return "ERROR"
 

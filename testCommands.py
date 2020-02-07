@@ -3,7 +3,7 @@ from Tree import *
 # These are temporary test functions. This is where helper functions
 # that execute SQL code will live.
 
-def getArtist(song):
+def getSongArtist(song):
     if song == "Shape of You":
         return "Ed Sheeran"
     elif song == "Blank Space":
@@ -13,7 +13,7 @@ def getArtist(song):
     else:
         return "Song not found."
 
-def getLength(song):
+def getSongLength(song):
     if song == "Shape of You":
         return "180"
     elif song == "Blank Space":
@@ -23,7 +23,7 @@ def getLength(song):
     else:
         return "Song not found."
 
-def getTempo(song):
+def getSongTempo(song):
     if song == "Shape of You":
         return "102"
     elif song == "Blank Space":
@@ -33,7 +33,7 @@ def getTempo(song):
     else:
         return "Song not found."
 
-def getPopularity(artist):
+def getSongPopularity(artist):
     if artist == "Ed Sheeran":
         return "85"
     elif artist == "Billie Eilish":
