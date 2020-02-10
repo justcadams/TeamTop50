@@ -157,7 +157,6 @@ class SQLBackEnd:
 						newConnection.close()
 
 	def uploadCSV(self):
-		self.currentConnection.text_factory = str
 		root = tk.Tk()
 		root.withdraw()
 		filePath = filedialog.askopenfilename()
@@ -229,7 +228,7 @@ class SQLBackEnd:
 			print("Inserting rows.")
 
 	def selectAll(self, tableName):
-		databaseString = self.currentTerminal.execute("SELECT * FROM " + tableName)
+		databaseString = self.currentTerminal.execute("SELECT * FROM " + tableName).fetchall()
 		print(databaseString)
 
 	def regexCheck(self):
