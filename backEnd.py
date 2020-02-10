@@ -46,8 +46,8 @@ class SQLBackEnd:
 		# Ensure the connection this terminal is changing to is within the range of available server connections.
 		if(connectionNumber > -1 and connectionNumber < len(self.databaseConnections)):
 			# Update the current connection to reflect this terminal's selection.
-		  	self.currentConnection = self.databaseConnections[connectionNumber][0]
-		  	# Update the location of this terminal's cursor.
+			self.currentConnection = self.databaseConnections[connectionNumber][0]
+			# Update the location of this terminal's cursor.
 			self.currentTerminal = self.currentConnection.cursor()
 
 	def displayConnections(self):
@@ -107,7 +107,7 @@ class SQLBackEnd:
 						# Print database connection status.
 						print(newConnection.sqlite3_status())
 						# Store connection and filename for later reference.
-						databaseConnection.append(tuple((newConnection,filename)))
+						self.databaseConnections.append(tuple((newConnection,filename)))
 					except Error as e:
 						print(e)
 					finally:
@@ -131,7 +131,7 @@ class SQLBackEnd:
 					# Print database connection status.
 					print(newConnection.sqlite3_status())
 					# Store connection and filename for later reference.
-					databaseConnections.append(tuple((newConnection,filename)))
+					self.databaseConnections.append(tuple((newConnection,filename)))
 				except Error as e:
 					print(e)
 				finally:
@@ -205,21 +205,25 @@ class SQLBackEnd:
 				print("Table name is not a valid type.")
 
 	def createTable(self, tableName, columnNames, columnDataTypes):
-		regexCheck = False
-		if(regexCheck(tableName + columnnNames + columnDataTypes)):
+		checkString = tableName
+		for val in columnNames:
+			checkString += val
+		for val in columnDataTypes:
+			checkString += val
+		if(self.regexCheck(checkString)):
 			print("Hacking attempt detected. Ignoring user input.")
 		else:				
 			if(len(columnNames) == len(columnDataTypes)):
 				print("Creating table.")
 				SQLString = "CREATE TABLE " + tableName + "("
 				for i in range(len(columnNames)):
-					SQLString += columnnNames[i] + " " + columnnDataTypes[i] + ", "
+					SQLString += columnNames[i] + " " + columnDataTypes[i] + ", "
 				SQLString += ");"
 			self.currentTerminal.execute(SQLString)
 			self.currentTerminal.commit()
 
 	def createRows(self, tableName, columnnNames, rowData):
-		if(regexCheck(tableName + columnnNames + rowData)):
+		if(self.regexCheck(tableName + columnnNames + rowData)):
 			print("Hacking attempt detected. Ignoring user input.")
 		else:
 			print("Inserting rows.")
