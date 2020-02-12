@@ -11,7 +11,7 @@ from sqlite3 import Error
 
 class SQLBackEnd:
 	# databaseConnection contains a tuple with the sqlite3 connection object first and the filename string object second.
-	def __init__(self, filename):
+	def __init__(self, filename, debug = False):
 		# Field to maintain multiple connections.
 		self.databaseConnections = list()
 		# Field to identify the current server this terminal is interfacing with.
@@ -22,10 +22,26 @@ class SQLBackEnd:
 		self.currentTerminal = 0
 		# Connect to the server specified.
 		self.connectToServer(filename)
+		# Store the user's debug setting.
+		self.debug = debug
 
-		# Requires: String filename - The name of the file or URI for the virtual server / distant server.
-		# Modifies: list(tuple(Object, filename)) databaseConnection - List containing the relevant server connection information.
-		# Effects: Creates a server connection and stores the relevant information. 
+	# Requires:
+	# Modifies:
+	# Effects:
+
+	def getDebugSetting(self):
+		return self.debug
+
+	# Requires:
+	# Modifies:
+	# Effects:
+
+	def setDebugSetting(self, setting):
+		self.debug = setting
+
+	# Requires: String filename - The name of the file or URI for the virtual server / distant server.
+	# Modifies: list(tuple(Object, filename)) databaseConnection - List containing the relevant server connection information.
+	# Effects: Creates a server connection and stores the relevant information.
 
 	def connectToServer(self, filename):
 		# TODO: Mount remote file system.
@@ -42,6 +58,10 @@ class SQLBackEnd:
 			# If there is an error print out the error to the log.
 			print(e)
 
+	# Requires:
+	# Modifies:
+	# Effects:
+
 	def changeConnection(self, connectionNumber):
 		# Ensure the connection this terminal is changing to is within the range of available server connections.
 		if(connectionNumber > -1 and connectionNumber < len(self.databaseConnections)):
@@ -50,26 +70,42 @@ class SQLBackEnd:
 			# Update the location of this terminal's cursor.
 			self.currentTerminal = self.currentConnection.cursor()
 
+	# Requires:
+	# Modifies:
+	# Effects:
+
 	def displayConnections(self):
 		# Select all of the objects in the database connection list.
 		for conn in self.databaseConnections:
 			# Print out the connection uri and the filename.
 			print("Connection " + str(conn[0]) + " at " + conn[1] + ".")
 
+	# Requires:
+	# Modifies:
+	# Effects:
+
 	def displayCurrentConnection(self):
 		print("Connection " + str(self.currentConnection) + " is selected.")
-	
+
+	# Requires:
+	# Modifies:
+	# Effects:
+
 	def disconnectFromServer(self, listLocation):
 		sqlite3.disconnect(self.databaseConnection[listLocation][1])
 
-	def createDatabase(self, databaseName, filename):
+	# Requires:
+	# Modifies:
+	# Effects:
+
+	def createDatabase(self, filename):
 		# TODO: Mount remote file system.
-		db_exists = os.path.exists(databaseName)
+		dbExists = os.path.exists(filename)
 		# TODO: Create the database if it does not exist.
 		# TODO: Ask the user if they want to create the database if it does exist.
-		if db_exists:
+		if dbExists:
 			# Let the user know that the database already exists.
-			print("Database " + databaseName + "already exists.")
+			print("Database " + filename + "already exists.")
 			# Ask the user if they would like to overwrite the current database.
 			userResponse = input("Would you like to overwrite this database? Y/N: ")
 			regexCheck = False
@@ -113,13 +149,17 @@ class SQLBackEnd:
 					finally:
 						if newConnection:
 							newConnection.close()
-	
+
+	# Requires:
+	# Modifies:
+	# Effects:
+
 	def createDatabase(self, filename, databaseName):
 		# TODO: Mount remote file system.
-		db_exists = os.path.exists(databaseName)
+		dbExists = os.path.exists(databaseName)
 		# TODO: Create the database if it does not exist.
 		# TODO: Ask the user if they want to create the database if it does exist.
-		if db_exists:
+		if dbExists:
 			# Let the user know that the database already exists.
 			print("Database " + databaseName + "already exists.")
 			# Ask the user if they would like to overwrite the current database.
@@ -156,6 +196,10 @@ class SQLBackEnd:
 					if newConnection:
 						newConnection.close()
 
+	# Requires:
+	# Modifies:
+	# Effects:
+
 	def uploadCSV(self):
 		root = tk.Tk()
 		root.withdraw()
@@ -164,7 +208,11 @@ class SQLBackEnd:
 		# dtypes = {'ID': 'INTEGER', 'Track.Name': 'str', 'Artist.Name': 'str', 'Genre': 'str', 'Beats.Per.Minute': 'INTEGER', 'Energy': 'INTEGER', 'Danceability': 'INTEGER', 'Loudness': 'INTEGER', 'Liveness': 'INTEGER', 'Valence': 'INTEGER', 'Length': 'INTEGER', 'Acousticness': 'INTEGER', 'Speechiness': 'INTEGER', 'Popularity': 'INTEGER'}
 		songs.to_sql('TOP50', self.currentConnection, if_exists='append', index=False)
 		self.currentConnection.commit()
-	
+
+	# Requires:
+	# Modifies:
+	# Effects:
+
 	def deleteDatabase(self, databaseName):
 		if(self.regexCheck(databaseName)):
 			print("Hacking attempt detected. Ignoring user input.")
@@ -172,12 +220,20 @@ class SQLBackEnd:
 			self.currentTerminal.execute("DROP " + databaseName)
 			self.currentTerminal.commit()
 
+	# Requires:
+	# Modifies:
+	# Effects:
+
 	def deleteTable(self, tableName):
 		if(self.regexCheck(tableName)):
 			print("Hacking attempt detected. Ignoring user input.")
 		else:
 			self.currentTerminal.execute("DROP TABLE " + tableName)
 			self.currentTerminal.commit()
+
+	# Requires:
+	# Modifies:
+	# Effects:
 
 	def deleteColumn(self, tableName, columnNames):
 		if(self.regexCheck(tableName + columnNames)):
@@ -192,6 +248,9 @@ class SQLBackEnd:
 			self.currentTerminal.execute(SQLCommand)
 			self.currentTerminal.commit()
 
+	# Requires:
+	# Modifies:
+	# Effects:
 
 	def createTable(self, tableName):
 		if(self.regexCheck(tableName)):
@@ -202,6 +261,10 @@ class SQLBackEnd:
 				self.databaseConnection.execute("CREATE TABLE " + tableName + "(rowID INTEGER PRIMARY KEY ASC)")
 			else:
 				print("Table name is not a valid type.")
+
+	# Requires:
+	# Modifies:
+	# Effects:
 
 	def createTable(self, tableName, columnNames, columnDataTypes):
 		checkString = tableName
@@ -221,15 +284,133 @@ class SQLBackEnd:
 			self.currentTerminal.execute(SQLString)
 			self.currentTerminal.commit()
 
-	def createRows(self, tableName, columnnNames, rowData):
+	# Requires:
+	# Modifies:
+	# Effects:
+
+	def createRows(self, tableName, columnnNames, columnDataTypes, rowData):
 		if(self.regexCheck(tableName + columnnNames + rowData)):
 			print("Hacking attempt detected. Ignoring user input.")
 		else:
 			print("Inserting rows.")
 
-	def selectAll(self, tableName):
-		databaseString = self.currentTerminal.execute("SELECT * FROM " + tableName).fetchall()
+	# Requires:
+	# Modifies:
+	# Effects:
+
+	def selectAllFromTable(self, tableName):
+		SQLString = "SELECT * FROM " + tableName
+		databaseString = self.currentTerminal.execute(SQLString).fetchall()
+		self.currentConnection.commit()
 		print(databaseString)
+		return databaseString
+
+	# Requires:
+	# Modifies:
+	# Effects:
+
+	def getSongsbyArtist(self, artistName, tableName = "TOP50"):
+		SQLString = "SELECT TrackName, ArtistName FROM " + tableName + " WHERE ArtistName ='" + artistName + "'"
+		databaseString = self.currentTerminal.execute(SQLString).fetchall()
+		self.currentConnection.commit()
+		print(databaseString)
+		return databaseString
+
+	# Requires:
+	# Modifies:
+	# Effects:
+
+	def getPopularityBySong(self, songName, tableName = "TOP50"):
+		SQLString = "SELECT TrackName, Popularity FROM " + tableName + " WHERE TrackName ='" + songName + "'"
+		databaseString = self.currentTerminal.execute(SQLString).fetchall()
+		self.currentConnection.commit()
+		print(databaseString)
+		return databaseString
+
+	# Requires:
+	# Modifies:
+	# Effects:
+
+	def getArtistBySong(self, songName, tableName = "TOP50"):
+		SQLString = "SELECT TrackName, ArtistName FROM " + tableName + " WHERE TrackName = '" + songName + "'"
+		databaseString = self.currentTerminal.execute(SQLString).fetchall()
+		self.currentConnection.commit()
+		print(databaseString)
+		return databaseString
+
+	# Requires:
+	# Modifies:
+	# Effects:
+
+	def getLengthBySong(self, songName, tableName = "TOP50"):
+		SQLString = "SELECT TrackName, Length FROM " + tableName + " WHERE TrackName = '" + songName + "'"
+		databaseString = self.currentTerminal.execute(SQLString).fetchall()
+		self.currentConnection.commit()
+		print(databaseString)
+		return databaseString
+
+	# Requires:
+	# Modifies:
+	# Effects:
+
+	def getDanceabilityBySong(self, songName, tableName = "TOP50"):
+		SQLString = "SELECT TrackName, Danceability FROM " + tableName + " WHERE TrackName = '" + songName + "'"
+		databaseString = self.currentTerminal.execute(SQLString).fetchall()
+		self.currentConnection.commit()
+		print(databaseString)
+		return databaseString
+
+	# Requires:
+	# Modifies:
+	# Effects:
+
+	def getDanceabilityByArtist(self, artistName, tableName = "TOP50"):
+		SQLString = "SELECT ArtistName, Danceability FROM " + tableName + " WHERE ArtistName = '" + artistName + "'"
+		databaseString = self.currentTerminal.execute(SQLString).fetchall()
+		self.currentConnection.commit()
+		summation = 0
+		for val in databaseString:
+			summation = val[1] + summation
+		average = summation/len(databaseString)
+		print(databaseString)
+		print(average)
+		return average
+
+	# Requires:
+	# Modifies:
+	# Effects:
+
+	def getPopularityByArtist(self, artistName, tableName = "TOP50"):
+		SQLString = "SELECT ArtistName, Popularity FROM " + tableName + " WHERE ArtistName ='" + artistName + "'"
+		databaseString = self.currentTerminal.execute(SQLString).fetchall()
+		self.currentConnection.commit()
+		summation = 0
+		for val in databaseString:
+			summation = val[1] + summation
+		average = summation/len(databaseString)
+		print(databaseString)
+		print(average)
+		return average
+
+	# Requires:
+	# Modifies:
+	# Effects:
+
+	def getLengthByArtist(self, artistName, tableName = "TOP50"):
+		SQLString = "SELECT ArtistName, Length FROM " + tableName + " WHERE ArtistName ='" + artistName + "'"
+		databaseString = self.currentTerminal.execute(SQLString).fetchall()
+		self.currentConnection.commit()
+		summation = 0
+		for val in databaseString:
+			summation = val[1] + summation
+		average = summation/len(databaseString)
+		print(databaseString)
+		print(average)
+		return average
+
+	# Requires:
+	# Modifies:
+	# Effects:
 
 	def regexCheck(self):
 		return False
@@ -245,7 +426,14 @@ virtualServer.displayConnections()
 virtualServer.changeConnection(0)
 virtualServer.displayCurrentConnection()
 virtualServer.uploadCSV()
-virtualServer.selectAll('TOP50')
+virtualServer.selectAllFromTable('TOP50')
+virtualServer.getSongsbyArtist('Marshmello')
+virtualServer.getPopularityBySong('Happier')
+virtualServer.getPopularityByArtist('Marshmello')
+virtualServer.getDanceabilityBySong('Happier')
+virtualServer.getDanceabilityByArtist('Marshmello')
+virtualServer.getLengthBySong('Happier')
+virtualServer.getLengthByArtist('Marshmello')
 
 # Matt's workspace
 

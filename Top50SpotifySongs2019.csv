@@ -1,4 +1,4 @@
-﻿,Track.Name,Artist.Name,Genre,Beats.Per.Minute,Energy,Danceability,Loudness..dB..,Liveness,Valence.,Length.,Acousticness..,Speechiness.,Popularity
+﻿,TrackName,ArtistName,Genre,BeatsPerMinute,Energy,Danceability,Loudness(dB),Liveness,Valence,Length,Acousticness,Speechiness,Popularity
 1,Señorita,Shawn Mendes,canadian pop,117,55,76,-6,8,75,191,4,3,79
 2,China,Anuel AA,reggaeton flow,105,81,79,-4,8,61,302,8,9,92
 3,boyfriend (with Social House),Ariana Grande,dance pop,190,80,40,-4,16,70,186,12,46,85
