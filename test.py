@@ -1,6 +1,6 @@
 from parser import *
 
-print(parse("Hello of world"))
+print(str(buildTree(parse("more popular 'shape of you' and 'tik tok'"))))
 
 
 
