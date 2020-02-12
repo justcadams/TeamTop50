@@ -2,9 +2,9 @@ from parser import *
 
 if __name__ == "__main__":
     go = True
-    print("Enter command or type 'help'.")
+    print("Enter command or type 'help'")
     while go:
-        query = input("Input: ")
+        query = input("> ")
 
         if query == "help":
             print("TYPE SOMETHING")
@@ -13,4 +13,12 @@ if __name__ == "__main__":
         else:
             # TODO
             # Execute command or throw error
-            print("TODO")
+            valid = True
+
+
+            if valid:
+                print("TODO")
+                print("TODO: output here")
+            else:
+                print("Invalid command. Try again or type 'help'")
+
