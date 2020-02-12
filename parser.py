@@ -45,7 +45,7 @@ def buildTree(array):
                 newArray.append(array.pop(0))
             else:
                 newArray.append(array.pop(0))
-            index += 1
+            index+= 1
 
         # build left and right branches with the two arrays
         newTree.setLeftChild(buildTree(newArray))
@@ -53,16 +53,20 @@ def buildTree(array):
         return newTree
 
 def split(array, newArray, delim):
-    count = 0  # count variable used to keep track of encapsulated binary arguments
-    index = 0 # index used to loop through array
+    count = 0   # count variable used to keep track of encapsulated binary arguments
+    index = 0   # index used to loop through array
 
-    while (array[index] != "and") and (count != 0):
+    while (array[index] != delim) and (count == 0):
+        print(array[index] != delim)
         if array[index] in BINARY_KEYWORDS:
             count += 1
             newArray.append(array.pop(0))
-        elif (array[index] == "and"):
+        elif (array[index] == delim):
             count -= 1
             newArray.append(array.pop(0))
         else:
             newArray.append(array.pop(0))
         index += 1
+
+    print(array)
+    print(newArray)
