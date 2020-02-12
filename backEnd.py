@@ -415,7 +415,7 @@ class SQLBackEnd:
 
 	def regexCheck(self):
 		return False
-	
+
 # Justin's workspace
 
 # Testing SQLBackEnd class.
@@ -438,35 +438,35 @@ virtualServer.getLengthByArtist('Marshmello')
 
 # Matt's workspace
 
-    def getSongLength(self, SongTitle):
-        #Open a connection with database and collect the proper row
-        databaseString =  self.currentTerminal.execute("SELECT " + SongTitle + "FROM ##NAME OF TABLE##")
-
-        #from that row navigate to the song length and pull from table
-        #return this integer
-        return "getSongLength is currently being worked on"
-
-
-    def getSongTempo(self, SongTitle):
-        databaseString = self.currentTerminal.execute("SELECT " + SongTitle + "FROM ##NAME OF TABLE##")
-        #From connection with database find the row associated with the song
-        #Collect bpm data from the table
-        #return this integer
-        return "getSongTempo is currently being worked on"
-
-    def getArtistPopularity(self, Artist):
-        databaseString = ""
-        # from an existing connection with database find each of the rows with songs associated with the artist
-        # Hold each of these songs individual popularities
-        # Perform an average calculation on these songs popularity
-        # Return the integer associated with popularitry between 0 and 100, 100 being very popular
-
-    def getArtistDanceability(self, SongTitle):
-        databaseString = ""
-        # from an existing connection with database find each of the rows with songs associated with the artist
-        # Hold each of these songs individual danceability ratings
-        # Perform an average calculation on these song's danceability ratings
-        # Return the integer associated with danceability between 0 and 100, 100 being very danceable
+    # def getSongLength(self, SongTitle):
+    #     #Open a connection with database and collect the proper row
+    #     databaseString =  self.currentTerminal.execute("SELECT " + SongTitle + "FROM ##NAME OF TABLE##")
+	#
+    #     #from that row navigate to the song length and pull from table
+    #     #return this integer
+    #     return "getSongLength is currently being worked on"
+	#
+	#
+    # def getSongTempo(self, SongTitle):
+    #     databaseString = self.currentTerminal.execute("SELECT " + SongTitle + "FROM ##NAME OF TABLE##")
+    #     #From connection with database find the row associated with the song
+    #     #Collect bpm data from the table
+    #     #return this integer
+    #     return "getSongTempo is currently being worked on"
+	#
+    # def getArtistPopularity(self, Artist):
+    #     databaseString = ""
+    #     # from an existing connection with database find each of the rows with songs associated with the artist
+    #     # Hold each of these songs individual popularities
+    #     # Perform an average calculation on these songs popularity
+    #     # Return the integer associated with popularitry between 0 and 100, 100 being very popular
+	#
+    # def getArtistDanceability(self, SongTitle):
+    #     databaseString = ""
+    #     # from an existing connection with database find each of the rows with songs associated with the artist
+    #     # Hold each of these songs individual danceability ratings
+    #     # Perform an average calculation on these song's danceability ratings
+    #     # Return the integer associated with danceability between 0 and 100, 100 being very danceable
 
 
 
