@@ -239,17 +239,47 @@ class SQLBackEnd:
 # Justin's workspace
 
 # Testing SQLBackEnd class.
-virtualServer = SQLBackEnd('test1.mdf')
-virtualServer.displayConnections()
-virtualServer.connectToServer('test2.mdf')
-virtualServer.connectToServer('test3.mdf')
-virtualServer.displayConnections()
-virtualServer.changeConnection(0)
-virtualServer.displayCurrentConnection()
-virtualServer.uploadCSV()
-virtualServer.selectAll('TOP50')
+# virtualServer = SQLBackEnd('test1.mdf')
+# virtualServer.displayConnections()
+# virtualServer.connectToServer('test2.mdf')
+# virtualServer.connectToServer('test3.mdf')
+# virtualServer.displayConnections()
+# virtualServer.changeConnection(0)
+# virtualServer.displayCurrentConnection()
+# virtualServer.uploadCSV()
+# virtualServer.selectAll('TOP50')
 
 # Matt's workspace
+    def getSongLength(self, SongTitle):
+        #Open a connection with database and collect the proper row
+        databaseString =  self.currentTerminal.execute("SELECT " + SongTitle + "FROM ##NAME OF TABLE##")
+
+        #from that row navigate to the song length and pull from table
+        #return this integer
+        return "getSongLength is currently being worked on"
+
+
+    def getSongTempo(self, SongTitle):
+        databaseString = self.currentTerminal.execute("SELECT " + SongTitle + "FROM ##NAME OF TABLE##")
+        #From connection with database find the row associated with the song
+        #Collect bpm data from the table
+        #return this integer
+        return "getSongTempo is currently being worked on"
+
+    def getArtistPopularity(self, Artist):
+        databaseString = ""
+        # from an existing connection with database find each of the rows with songs associated with the artist
+        # Hold each of these songs individual popularities
+        # Perform an average calculation on these songs popularity
+        # Return the integer associated with popularitry between 0 and 100, 100 being very popular
+
+    def getArtistDanceability(self, SongTitle):
+        databaseString = ""
+        # from an existing connection with database find each of the rows with songs associated with the artist
+        # Hold each of these songs individual danceability ratings
+        # Perform an average calculation on these song's danceability ratings
+        # Return the integer associated with danceability between 0 and 100, 100 being very danceable
+
 
 
 # # Establish a connection to a local database.
