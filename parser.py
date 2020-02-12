@@ -1,7 +1,7 @@
 from shlex import *
 from Tree import *
 
-BINARY_KEYWORDS = ["compare", "more"]
+BINARY_KEYWORDS = ["compare", "more popular"]
 BUZZWORDS = ["of", "by"]
 
 
@@ -25,48 +25,25 @@ def buildTree(array):
 
     # run else if binary keyword detected as first element in array
     else:
-        newTree = Tree(array[0]+array[1])
+        newTree = Tree(array[0])
         array.pop(0)
-        array.pop(0)
 
-        newArray = []   # newArray created to hold all arguments before and identifier
-        count = 0       # count variable used to keep track of encapsulated binary arguments
-        index = 0       # index used to loop through array
+        index = split(array, "and")
 
-        ### TODO: Exception handling for when no "and" is detected and index exceeds size of array
-        # While loop splits the first half of arguments before the and identifier and remaining arguments after
-        # into two arrays (newArray and array)
-        while (array[index] != "and") and (count != 0):
-            if array[index] in BINARY_KEYWORDS:
-                count += 1
-                newArray.append(array.pop(0))
-            elif (array[index] == "and"):
-                count -= 1
-                newArray.append(array.pop(0))
-            else:
-                newArray.append(array.pop(0))
-            index+= 1
-
-        # build left and right branches with the two arrays
-        newTree.setLeftChild(buildTree(newArray))
-        newTree.setRightChild(buildTree(array))
+        newTree.setLeftChild(buildTree(array[0:index]))
+        newTree.setRightChild(buildTree(array[index:]))
         return newTree
 
-def split(array, newArray, delim):
+def split(array, delim):
     count = 0   # count variable used to keep track of encapsulated binary arguments
-    index = 0   # index used to loop through array
+    index = 0
 
-    while (array[index] != delim) and (count == 0):
-        print(array[index] != delim)
+    while (array[index] != delim) or (count != 0):
         if array[index] in BINARY_KEYWORDS:
             count += 1
-            newArray.append(array.pop(0))
+
         elif (array[index] == delim):
             count -= 1
-            newArray.append(array.pop(0))
-        else:
-            newArray.append(array.pop(0))
         index += 1
 
-    print(array)
-    print(newArray)
+    print(index)
