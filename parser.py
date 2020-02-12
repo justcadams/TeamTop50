@@ -31,7 +31,7 @@ def buildTree(array):
         index = split(array, "and")
 
         newTree.setLeftChild(buildTree(array[0:index]))
-        newTree.setRightChild(buildTree(array[index:]))
+        newTree.setRightChild(buildTree(array[index+1:]))
         return newTree
 
 def split(array, delim):
