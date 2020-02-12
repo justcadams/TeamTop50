@@ -415,7 +415,7 @@ class SQLBackEnd:
 
 	def regexCheck(self):
 		return False
-=======
+	
     # databaseConnection contains a tuple with the sqlite3 connection object first and the filename string object second.
     def __init__(self, filename):
         # Field to maintain multiple connections.
