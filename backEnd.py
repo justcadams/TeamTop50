@@ -322,7 +322,7 @@ class SQLBackEnd:
 	# Effects:
 
 	def getPopularityBySong(self, songName, tableName = "TOP50"):
-		SQLString = "SELECT TrackName, Popularity FROM " + tableName + " WHERE TrackName ='" + songName + "'"
+		SQLString = "SELECT Popularity, TrackName FROM " + tableName + " WHERE TrackName ='" + songName + "'"
 		databaseString = self.currentTerminal.execute(SQLString).fetchall()
 		self.currentConnection.commit()
 		print(databaseString)
@@ -333,7 +333,7 @@ class SQLBackEnd:
 	# Effects:
 
 	def getArtistBySong(self, songName, tableName = "TOP50"):
-		SQLString = "SELECT TrackName, ArtistName FROM " + tableName + " WHERE TrackName = '" + songName + "'"
+		SQLString = "SELECT ArtistName, TrackName FROM " + tableName + " WHERE TrackName = '" + songName + "'"
 		databaseString = self.currentTerminal.execute(SQLString).fetchall()
 		self.currentConnection.commit()
 		print(databaseString)
@@ -344,7 +344,7 @@ class SQLBackEnd:
 	# Effects:
 
 	def getLengthBySong(self, songName, tableName = "TOP50"):
-		SQLString = "SELECT TrackName, Length FROM " + tableName + " WHERE TrackName = '" + songName + "'"
+		SQLString = "SELECT Length, TrackName FROM " + tableName + " WHERE TrackName = '" + songName + "'"
 		databaseString = self.currentTerminal.execute(SQLString).fetchall()
 		self.currentConnection.commit()
 		print(databaseString)
@@ -355,7 +355,7 @@ class SQLBackEnd:
 	# Effects:
 
 	def getDanceabilityBySong(self, songName, tableName = "TOP50"):
-		SQLString = "SELECT TrackName, Danceability FROM " + tableName + " WHERE TrackName = '" + songName + "'"
+		SQLString = "SELECT Danceability, TrackName FROM " + tableName + " WHERE TrackName = '" + songName + "'"
 		databaseString = self.currentTerminal.execute(SQLString).fetchall()
 		self.currentConnection.commit()
 		print(databaseString)
@@ -366,12 +366,12 @@ class SQLBackEnd:
 	# Effects:
 
 	def getDanceabilityByArtist(self, artistName, tableName = "TOP50"):
-		SQLString = "SELECT ArtistName, Danceability FROM " + tableName + " WHERE ArtistName = '" + artistName + "'"
+		SQLString = "SELECT Danceability, ArtistName FROM " + tableName + " WHERE ArtistName = '" + artistName + "'"
 		databaseString = self.currentTerminal.execute(SQLString).fetchall()
 		self.currentConnection.commit()
 		summation = 0
 		for val in databaseString:
-			summation = val[1] + summation
+			summation = val[0] + summation
 		average = summation/len(databaseString)
 		print(databaseString)
 		print(average)
@@ -382,12 +382,12 @@ class SQLBackEnd:
 	# Effects:
 
 	def getPopularityByArtist(self, artistName, tableName = "TOP50"):
-		SQLString = "SELECT ArtistName, Popularity FROM " + tableName + " WHERE ArtistName ='" + artistName + "'"
+		SQLString = "SELECT Popularity, ArtistName FROM " + tableName + " WHERE ArtistName ='" + artistName + "'"
 		databaseString = self.currentTerminal.execute(SQLString).fetchall()
 		self.currentConnection.commit()
 		summation = 0
 		for val in databaseString:
-			summation = val[1] + summation
+			summation = val[0] + summation
 		average = summation/len(databaseString)
 		print(databaseString)
 		print(average)
@@ -398,7 +398,7 @@ class SQLBackEnd:
 	# Effects:
 
 	def getLengthByArtist(self, artistName, tableName = "TOP50"):
-		SQLString = "SELECT ArtistName, Length FROM " + tableName + " WHERE ArtistName ='" + artistName + "'"
+		SQLString = "SELECT Length, ArtistName FROM " + tableName + " WHERE ArtistName ='" + artistName + "'"
 		databaseString = self.currentTerminal.execute(SQLString).fetchall()
 		self.currentConnection.commit()
 		summation = 0
