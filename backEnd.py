@@ -640,12 +640,9 @@ class SQLBackEnd:
     def regexCheck(self):
         return False
 
->>>>>>> ed6a33f464bd7bb7072682a2c6c16d04f595424e
-
 # Justin's workspace
 
 # Testing SQLBackEnd class.
-<<<<<<< HEAD
 virtualServer = SQLBackEnd('test1.mdf')
 virtualServer.displayConnections()
 virtualServer.connectToServer('test2.mdf')
@@ -664,6 +661,7 @@ virtualServer.getLengthBySong('Happier')
 virtualServer.getLengthByArtist('Marshmello')
 
 # Matt's workspace
+
     def getSongLength(self, SongTitle):
         #Open a connection with database and collect the proper row
         databaseString =  self.currentTerminal.execute("SELECT " + SongTitle + "FROM ##NAME OF TABLE##")
