@@ -7,6 +7,16 @@ def parse(query):
     words = shlex.split(query)
     for BUZZWORD in BUZZWORDS:
         words = [word for word in words if word != BUZZWORD]
+
+    # Finds keywords that are longer than one word and combines them
+    N = len(words)
+    i = 0
+    while i < len(words) - 1:
+        tmp = words[i] + " " + words[i + 1]
+        if tmp in KEYWORDS:
+            words[i] = tmp
+            del (words[i + 1])
+        i = i + 1
     return words
 
 
@@ -26,14 +36,16 @@ def buildTree(array):
         newTree = Tree(array[0])
         array.pop(0)
 
-        index = split(array, "and")
+        index = splitIndex(array, "and")
+
+        #TODO: handle exception for -1 return on splitIndex given invalid binary search
 
         newTree.setLeftChild(buildTree(array[0:index]))
         newTree.setRightChild(buildTree(array[index+1:]))
         return newTree
 
 
-def split(array, delim):
+def splitIndex(array, delim):
     count = 0   # count variable used to keep track of encapsulated binary arguments
     index = 0   # index for the split point
 
@@ -47,5 +59,3 @@ def split(array, delim):
         if index == len(array)-1:
             return -1
     return index
-
-    print(index)
