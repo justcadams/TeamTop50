@@ -1,14 +1,31 @@
-from shlex import *
+import shlex
 from Tree import *
 
-BINARY_KEYWORDS = ["compare", "more popular"]
-BUZZWORDS = ["of", "by"]
+UNARY_KEYWORDS = ["songs", "artist", "popularity",
+                  "danceability", "genre", "length", "tempo"]
+BINARY_KEYWORDS = ["compare", "more popular", "more danceable",
+                   "longer", "faster", "slower"]
+POLY_KEYWORDS = ["longest song", "slowest song", "most popular"]
+
+BUZZWORDS = ["of", "by", "get"]
+
 
 
 def parse(query):
-    words = split(query)
+    # Splits query into array, preserving words in quotation marks
+    words = shlex.split(query)
     for BUZZWORD in BUZZWORDS:
         words = [word for word in words if word != BUZZWORD]
+
+    # Finds keywords that are longer than one word and combines them
+    N = len(words)
+    i = 0
+    while i < len(words)-1:
+        tmp = words[i] + " " + words[i+1]
+        if tmp in BINARY_KEYWORDS or tmp in POLY_KEYWORDS:
+            words[i] = tmp
+            del(words[i+1])
+        i = i+1
     return words
 
 

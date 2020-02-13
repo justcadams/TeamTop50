@@ -49,7 +49,7 @@ def testEvaluate():
 
 def testParse():
     query1 = 'length of "Shape of You"'
-    query2 = 'populary of longest song by "Taylor Swift"'
+    query2 = 'popularity of longest song by "Taylor Swift"'
 
     tests = [(parse(query1), ['length', "Shape of You"]),
             (parse(query2), ['popularity', 'longest song', "Taylor Swift"])]
