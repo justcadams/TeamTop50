@@ -1,4 +1,5 @@
 from testCommands import *
+from keywords import *
 
 # Binary tree for constructing and executing query commands
 class Tree():
@@ -32,6 +33,8 @@ class Tree():
         # doing database queries; this is where backend should connect
         if self.isLeaf():
             return self.data
+        elif self.data not in KEYWORDS:
+            return "ERROR: Invalid command."
         else:
             if self.data == "artist":
                 return getSongArtist(self.rc.evaluate())

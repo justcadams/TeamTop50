@@ -1,15 +1,6 @@
 import shlex
 from Tree import *
-
-UNARY_KEYWORDS = ["songs", "artist", "popularity",
-                  "danceability", "genre", "length", "tempo"]
-BINARY_KEYWORDS = ["compare", "more popular", "more danceable",
-                   "longer", "faster", "slower"]
-POLY_KEYWORDS = ["longest song", "slowest song", "most popular"]
-
-BUZZWORDS = ["of", "by", "get"]
-
-
+from keywords import *
 
 def parse(query):
     # Splits query into array, preserving words in quotation marks
@@ -22,7 +13,7 @@ def parse(query):
     i = 0
     while i < len(words)-1:
         tmp = words[i] + " " + words[i+1]
-        if tmp in BINARY_KEYWORDS or tmp in POLY_KEYWORDS:
+        if tmp in KEYWORDS:
             words[i] = tmp
             del(words[i+1])
         i = i+1

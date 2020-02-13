@@ -8,17 +8,14 @@ if __name__ == "__main__":
 
         if query == "help":
             print("TYPE SOMETHING")
-        elif query == "quit":
+        elif query == "quit" or query == "quit()":
             go = False
         else:
             # TODO
             # Execute command or throw error
-            valid = True
+            query = parse(query)
+            commandTree = buildTree(query)
+            output = commandTree.evaluate()
+            print(output)
 
-
-            if valid:
-                print("TODO")
-                print("TODO: output here")
-            else:
-                print("Invalid command. Try again or type 'help'")
 
