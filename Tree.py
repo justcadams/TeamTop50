@@ -35,15 +35,19 @@ class Tree():
             return self.data
         elif self.data not in KEYWORDS:
             return "ERROR: Invalid command."
+        elif self.data == -1:
+            return "ERROR: Invalid Binary Search"
         else:
             if self.data == "artist":
-                return getSongArtist(self.rc.evaluate())
+                return getArtistBySong(self.rc.evaluate())
+            elif self.data == "song":
+                return getSongByArtist(self.rc.evaluate())
             elif self.data == "length":
                 return getSongLength(self.rc.evaluate())
             elif self.data == "tempo":
                 return getSongTempo(self.rc.evaluate())
             elif self.data == "popularity":
-                return getSongPopularity(self.rc.evaluate())
+                return getPopularity(self.rc.evaluate())
             else:
                 return "ERROR"
 
