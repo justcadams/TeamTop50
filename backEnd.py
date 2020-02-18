@@ -4,6 +4,7 @@ import sqlite3
 import psutil
 import regex
 import urllib3
+from difflib import SequenceMatcher
 import tkinter as tk
 import pandas as pd
 from tkinter import filedialog
@@ -54,7 +55,7 @@ class SQLBackEnd:
 			# Update current connection if the server connects with this terminal.
 			self.currentConnection = newConnection
 			# Update current terminal to reflect the current cursor location.
-			self.currentTerminal = self.newConnection.cursor()
+			self.currentTerminal = newConnection.cursor()
 		except Error as e:
 			# If there is an error print out the error to the log.
 			print(e)
@@ -312,8 +313,57 @@ class SQLBackEnd:
 	# Modifies:
 	# Effects:
 
-	def getObjectFromTable(self, tableName, objectName):
-		SQLString = "SELECT * FROM " + tableName + " "
+	def compareObjectsByParameter(self, firstObject, secondObject, parameter, tableName="TOP50"):
+		SQLString = "SELECT TrackName FROM " + tableName
+		query = self.currentTerminal.execute(SQLString).fetchall()
+		self.currentConnection.commit()
+		bestMatchFirstObjectTrackNameEntropy = SequenceMatcher(a=firstObject, b=query[0]).ratio()
+		bestMatchFirstObjectTrackNameValue = 0
+		bestMatchSecondObjectTrackNameEntropy = SequenceMatcher(a=secondObject, b=query[0]).ratio()
+		bestMatchSecondObjectTrackNameValue = 0
+		count = 0
+		for tuple in query:
+			if(SequenceMatcher(a=firstObject, b=tuple[0]).ratio() > bestMatchFirstObjectTrackNameEntropy):
+				bestMatchFirstObjectTrackNameEntropy = SequenceMatcher(a=firstObject, b=tuple[0]).ratio()
+				bestMatchFirstObjectTrackNameValue = count
+			if(SequenceMatcher(a=firstObject, b=tuple[0]).ratio() > bestMatchSecondObjectTrackNameEntropy):
+				bestMatchFirstObjectTrackNameEntropy = SequenceMatcher(a=secondObject, b=tuple[1]).ratio()
+				bestMatchSecondObjectTrackNameValue = count
+			count = count + 1
+		SQLString = "SELECT ArtistName FROM " + tableName
+		query = self.currentTerminal.execute(SQLString).fetchall()
+		self.currentConnection.commit()
+		bestMatchFirstObjectArtistNameEntropy = SequenceMatcher(a=firstObject, b=query[0]).ratio()
+		bestMatchFirstObjectArtistNameValue = 0
+		bestMatchSecondObjectArtistNameEntropy = SequenceMatcher(a=secondObject, b=query[0]).ratio()
+		bestMatchSecondObjectArtistNameValue = 0
+		count = 0
+		for tuple in query:
+			if(SequenceMatcher(a=firstObject, b=tuple[0]).ratio() > bestMatchFirstObjectArtistNameEntropy):
+				bestMatchFirstObjectArtistNameEntropy = SequenceMatcher(a=firstObject, b=tuple[0]).ratio()
+				bestMatchFirstObjectArtistNameValue = count
+			if(SequenceMatcher(a=firstObject, b=tuple[0]).ratio() > bestMatchSecondObjectArtistNameEntropy):
+				bestMatchSecondObjectArtistNameEntropy = SequenceMatcher(a=firstObject, b=tuple[1]).ratio()
+				bestMatchSecondObjectArtistNameValue = count
+			count = count + 1
+		objectEntropy = list(bestMatchFirstObjectTrackNameEntropy, bestMatchSecondObjectTrackNameEntropy, bestMatchFirstObjectArtistNameEntropy, bestMatchSecondObjectArtistNameEntropy)
+		bestEntropy = max(objectEntropy)
+		objectType = 0
+		returnValue = list()
+		for i in range(0, 3):
+			if(bestEntropy == objectEntropy[i]):
+				objectType = i
+		if(objectType < 2):
+			SQLString = "SELECT TrackName, " + parameter + " FROM " + tableName
+			query = self.currentTerminal.execute(SQLString).fetchall()
+			self.currentConnection.commit()
+			returnValue = list(query[bestMatchFirstObjectArtistNameValue],query[bestMatchSecondObjectArtistNameValue])
+		else:
+			SQLString = "SELECT TrackName, " + parameter + " FROM " + tableName
+			query = self.currentTerminal.execute(SQLString).fetchall()
+			self.currentConnection.commit()
+			returnValue = list(query[bestMatchFirstObjectTrackNameValue],query[bestMatchSecondObjectTrackNameValue])
+		return returnValue
 
 	# Requires:
 	# Modifies:
@@ -464,7 +514,7 @@ class SQLBackEnd:
 	# Requires:
 	# Modifies:
 	# Effects:
-	
+
 	def getBirthdayByArtist(self, artistName, tableName = "TOP50ARTISTS"):
 		SQLString = "SELECT Birthday, ArtistName FROM " + tableName + " WHERE ArtistName ='" + artistName + "'"
 		query = self.currentTerminal.execute(SQLString).fetchall()
