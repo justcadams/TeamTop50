@@ -18,12 +18,14 @@ def index():
     if request.method == "POST":
         try:
             query = request.form['submission']
-
+            data.append(query)
             go = True
-            loaded= False
+            loaded = False
 
             if query == "help":
-                return render_template("index.html", helpWords=WORD_HELP)
+                return render_template("index.html", helpWords=HELP_WORDS_LIST)
+
+            if query =="load":
 
 
             return render_template("index.html", Query=data)
