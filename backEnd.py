@@ -474,12 +474,15 @@ virtualServer.getDanceabilityByArtist('Marshmello')
 virtualServer.getLengthBySong('Happier')
 virtualServer.getLengthByArtist('Marshmello')
 
-# Matt's workspace
-
     # def getSongLength(self, SongTitle):
     #     #Open a connection with database and collect the proper row
     #     query =  self.currentTerminal.execute("SELECT " + SongTitle + "FROM ##NAME OF TABLE##")
-	
+
+# Matt's workspace
+	# def getSongLength(self, SongTitle):
+    #     #Open a connection with database and collect the proper row
+    #     databaseString =  self.currentTerminal.execute("SELECT " + SongTitle + "FROM ##NAME OF TABLE##")
+	#
     #     #from that row navigate to the song length and pull from table
     #     #return this integer
     #     return "getSongLength is currently being worked on"
