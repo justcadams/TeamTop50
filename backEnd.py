@@ -419,25 +419,27 @@ class SQLBackEnd:
 # Justin's workspace
 
 # Testing SQLBackEnd class.
-virtualServer = SQLBackEnd('test1.mdf')
-virtualServer.displayConnections()
-virtualServer.connectToServer('test2.mdf')
-virtualServer.connectToServer('test3.mdf')
-virtualServer.displayConnections()
-virtualServer.changeConnection(0)
-virtualServer.displayCurrentConnection()
-virtualServer.uploadCSV()
-virtualServer.selectAllFromTable('TOP50')
-virtualServer.getSongsbyArtist('Marshmello')
-virtualServer.getPopularityBySong('Happier')
-virtualServer.getPopularityByArtist('Marshmello')
-virtualServer.getDanceabilityBySong('Happier')
-virtualServer.getDanceabilityByArtist('Marshmello')
-virtualServer.getLengthBySong('Happier')
-virtualServer.getLengthByArtist('Marshmello')
+
+if __name__ == "__main__":
+    virtualServer = SQLBackEnd('test1.mdf')
+    virtualServer.displayConnections()
+    virtualServer.connectToServer('test2.mdf')
+    virtualServer.connectToServer('test3.mdf')
+    virtualServer.displayConnections()
+    virtualServer.changeConnection(0)
+    virtualServer.displayCurrentConnection()
+    virtualServer.uploadCSV()
+    virtualServer.selectAllFromTable('TOP50')
+    virtualServer.getSongsbyArtist('Marshmello')
+    virtualServer.getPopularityBySong('Happier')
+    virtualServer.getPopularityByArtist('Marshmello')
+    virtualServer.getDanceabilityBySong('Happier')
+    virtualServer.getDanceabilityByArtist('Marshmello')
+    virtualServer.getLengthBySong('Happier')
+    virtualServer.getLengthByArtist('Marshmello')
 
 # Matt's workspace
-
+'''
     def getSongLength(self, SongTitle):
         #Open a connection with database and collect the proper row
         databaseString =  self.currentTerminal.execute("SELECT " + SongTitle + "FROM ##NAME OF TABLE##")
@@ -493,3 +495,4 @@ virtualServer.getLengthByArtist('Marshmello')
 
 # # Close the connection and verify the system operates as specified.
 # conn.close()
+'''
