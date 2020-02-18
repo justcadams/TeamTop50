@@ -533,26 +533,27 @@ class SQLBackEnd:
 	def regexCheck(self):
 		return False
 
-# Justin's workspace
+	def testBackEnd(self):
+		# Testing SQLBackEnd class.
+		virtualServer = SQLBackEnd('testA.mdf')
+		virtualServer.displayConnections()
+		virtualServer.connectToServer('testB.mdf')
+		virtualServer.connectToServer('testC.mdf')
+		virtualServer.displayConnections()
+		virtualServer.changeConnection(0)
+		virtualServer.displayCurrentConnection()
+		virtualServer.uploadCSV('TOP50')
+		virtualServer.uploadCSV('TOP50ARTISTS')
+		virtualServer.selectAllFromTable('TOP50')
+		virtualServer.getSongsbyArtist('Marshmello')
+		virtualServer.getPopularityBySong('Happier')
+		virtualServer.getPopularityByArtist('Marshmello')
+		virtualServer.getDanceabilityBySong('Happier')
+		virtualServer.getDanceabilityByArtist('Marshmello')
+		virtualServer.getLengthBySong('Happier')
+		virtualServer.getLengthByArtist('Marshmello')
 
-# Testing SQLBackEnd class.
-virtualServer = SQLBackEnd('test1.mdf')
-virtualServer.displayConnections()
-virtualServer.connectToServer('test2.mdf')
-virtualServer.connectToServer('test3.mdf')
-virtualServer.displayConnections()
-virtualServer.changeConnection(0)
-virtualServer.displayCurrentConnection()
-virtualServer.uploadCSV('TOP50')
-virtualServer.uploadCSV('TOP50ARTISTS')
-virtualServer.selectAllFromTable('TOP50')
-virtualServer.getSongsbyArtist('Marshmello')
-virtualServer.getPopularityBySong('Happier')
-virtualServer.getPopularityByArtist('Marshmello')
-virtualServer.getDanceabilityBySong('Happier')
-virtualServer.getDanceabilityByArtist('Marshmello')
-virtualServer.getLengthBySong('Happier')
-virtualServer.getLengthByArtist('Marshmello')
+# Justin's workspace
 
 	# def getSongLength(self, SongTitle):
     #     #Open a connection with database and collect the proper row
