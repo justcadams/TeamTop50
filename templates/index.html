@@ -1,0 +1,48 @@
+<h1>Welcome to the Team Top 50 Query Box</h1>
+<p>Please take a look at out query structure and follow</p>
+<p>Don't worry, we are pretty forgiving if you make a typo</p>
+
+<form name="queryForm" method="put">
+    <textarea id="query-Text" class="text" cols="40" rows ="5" name="queryText"></textarea>
+
+   <input type="submit" value="Submit" class="submitButton">
+</form>
+
+<table>
+    <tbody>
+    {% for item in data %}
+    <tr>
+        <td>{{item[0]}}</td>
+        <td>{{item[1]}}</td>
+    </tr>
+    {% endfor %}
+    </tbody>
+</table>
+
+
+<div class="container">
+    <div class="chunk">
+        <p class="chunk-text">Top Artist</p>
+    </div>
+        <div class="chunk">
+        <p class="chunk-text">Popularity of</p>
+    </div>
+        <div class="chunk">
+        <p class="chunk-text">Danceability of</p>
+    </div>
+</div>
+
+<div class="photos-container">
+    <div class="team-pic">
+        <img src="static/placeholder.png">
+    </div>
+        <div class="team-pic">
+        <img src="static/placeholder.png">
+    </div>
+        <div class="team-pic">
+        <img src="static/placeholder.png">
+    </div>
+        <div class="team-pic">
+        <img src="static/placeholder.png">
+    </div>
+</div>
