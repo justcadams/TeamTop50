@@ -450,6 +450,36 @@ class SQLBackEnd:
 	# Modifies:
 	# Effects:
 
+	def getBirthplaceByArtist(self, artistName, tableName = "TOP50ARTISTS"):
+		SQLString = "SELECT Birthplace, ArtistName FROM " + tableName + " WHERE ArtistName ='" + artistName + "'"
+		query = self.currentTerminal.execute(SQLString).fetchall()
+		self.currentConnection.commit()
+		birthplace = query[0]
+		if(self.debug):
+			print(SQLString)
+			print(query)
+			print(birthplace)
+		return birthplace
+
+	# Requires:
+	# Modifies:
+	# Effects:
+	
+	def getBirthdayByArtist(self, artistName, tableName = "TOP50ARTISTS"):
+		SQLString = "SELECT Birthday, ArtistName FROM " + tableName + " WHERE ArtistName ='" + artistName + "'"
+		query = self.currentTerminal.execute(SQLString).fetchall()
+		self.currentConnection.commit()
+		birthday = query[0]
+		if(self.debug):
+			print(SQLString)
+			print(query)
+			print(birthday)
+		return birthday
+
+	# Requires:
+	# Modifies:
+	# Effects:
+
 	def regexCheck(self):
 		return False
 
@@ -474,7 +504,7 @@ virtualServer.getDanceabilityByArtist('Marshmello')
 virtualServer.getLengthBySong('Happier')
 virtualServer.getLengthByArtist('Marshmello')
 
-    # def getSongLength(self, SongTitle):
+	# def getSongLength(self, SongTitle):
     #     #Open a connection with database and collect the proper row
     #     query =  self.currentTerminal.execute("SELECT " + SongTitle + "FROM ##NAME OF TABLE##")
 
