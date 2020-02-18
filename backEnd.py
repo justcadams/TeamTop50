@@ -209,7 +209,7 @@ class SQLBackEnd:
 		filePath = filedialog.askopenfilename()
 		songs = pd.read_csv(filePath)
 		# dtypes = {'ID': 'INTEGER', 'Track.Name': 'str', 'Artist.Name': 'str', 'Genre': 'str', 'Beats.Per.Minute': 'INTEGER', 'Energy': 'INTEGER', 'Danceability': 'INTEGER', 'Loudness': 'INTEGER', 'Liveness': 'INTEGER', 'Valence': 'INTEGER', 'Length': 'INTEGER', 'Acousticness': 'INTEGER', 'Speechiness': 'INTEGER', 'Popularity': 'INTEGER'}
-		songs.to_sql('TOP50', self.currentConnection, if_exists='append', index=False)
+		songs.to_sql(tableName, self.currentConnection, if_exists='append', index=False)
 		self.currentConnection.commit()
 
 	# Requires:
