@@ -1,5 +1,8 @@
 from flask import Flask
 from flask import Blueprint, render_template, request
+from parser import *
+from keywords import *
+from backEnd import SQLBackEnd
 
 
 
@@ -8,18 +11,29 @@ from flask import Blueprint, render_template, request
 app = Flask(__name__)
 main = Blueprint("main", __name__)
 
-@app.route('/', methods=['PUT'])
+@app.route('/', methods=['POST', 'GET'])
 def index():
-
-    data = [['text', "First"], ['text', "Second"], ['text', "Third"]]
-    return render_template("index.html", data=data)
-
-
-@app.route('/', methods=["PUT"])
-def submission():
-
+    errors = []
     data = []
-    return render_template("index.html", data=data)
+    if request.method == "POST":
+        try:
+            query = request.form['submission']
+
+            go = True
+            loaded= False
+
+            if query == "help":
+                return render_template("index.html", helpWords=WORD_HELP)
+
+
+            return render_template("index.html", Query=data)
+
+        except:
+            errors.append("Unable to process your request.")
+    return render_template("index.html")
+
+
+
 
 
 

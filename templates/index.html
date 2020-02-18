@@ -2,18 +2,34 @@
 <p>Please take a look at out query structure and follow</p>
 <p>Don't worry, we are pretty forgiving if you make a typo</p>
 
-<form name="queryForm" method="put">
-    <textarea id="query-Text" class="text" cols="40" rows ="5" name="queryText"></textarea>
 
-   <input type="submit" value="Submit" class="submitButton">
+
+<form role="form" method='POST' action='/'>
+    <input type="text" name="submission" class="submitButton" id="query-text" placeholder="Enter Query..." style="max-width: 25%;" autofocus required>
+    <button type="submit" class="btn btn-default">Submit</button>
 </form>
+
+
+    <table>
+        <tbody>
+        {% for item in helpWords %}
+            <tr>{{ item[0] }}</tr>
+            <tr>{{ item[1] }}</tr>
+
+        {% endfor %}
+        </tbody>
+    </table>
+
+{% for item in Query %}
+    <h1>{{item}}</h1>
+{% endfor %}
 
 <table>
     <tbody>
     {% for item in data %}
     <tr>
         <td>{{item[0]}}</td>
-        <td>{{item[1]}}</td>
+
     </tr>
     {% endfor %}
     </tbody>
