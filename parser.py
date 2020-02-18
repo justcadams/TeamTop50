@@ -2,6 +2,7 @@ import shlex
 from Tree import *
 from keywords import *
 
+
 def parse(query):
     # Splits query into array, preserving words in quotation marks
     words = shlex.split(query)
@@ -38,16 +39,18 @@ def buildTree(array):
 
         index = splitIndex(array, "and")
 
-        #TODO: handle exception for -1 return on splitIndex given invalid binary search
-
-        newTree.setLeftChild(buildTree(array[0:index]))
-        newTree.setRightChild(buildTree(array[index+1:]))
-        return newTree
+        if index == -1:
+            newTree.setRightChild(-1)
+            return newTree
+        else:
+            newTree.setLeftChild(buildTree(array[0:index]))
+            newTree.setRightChild(buildTree(array[index+1:]))
+            return newTree
 
 
 def splitIndex(array, delim):
     count = 0   # count variable used to keep track of encapsulated binary arguments
-    index = 0   # index for the split point
+    index = 0  # index for the split point
 
     while (array[index] != delim) or (count != 0):
         if array[index] in BINARY_KEYWORDS:
@@ -56,6 +59,6 @@ def splitIndex(array, delim):
         elif array[index] == delim:
             count -= 1
         index += 1
-        if index == len(array)-1:
+        if index == len(array):
             return -1
     return index
