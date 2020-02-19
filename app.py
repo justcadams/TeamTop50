@@ -23,7 +23,7 @@ app = Flask(__name__)
 @app.route('/', methods=['POST', 'GET'])
 def index():
     errors = []
-    data = ["Empty"]
+    data = []
     runaround = 0
 
 
@@ -42,17 +42,19 @@ def index():
             queryfromPOST = request.form['submission']
             errors.append(queryfromPOST)
             errors.append(type(queryfromPOST))
-            tree = parserA.parse(queryfromPOST)
-            errors.append(str(tree))
-            errors.append(type(tree))
+
 
             try:
-                errors.append(tree.evaluate())
-                output = tree.evaluate()
+                tree = parserA.parse(queryfromPOST).evaluate()
+                errors.append(str(tree))
+                errors.append(type(tree))
+                output = [tree]
+                # errors.extend(tree.evaluate())
+                # data.extend(tree.evaluate())
 
             except:
                 errors.append("Broken Output Function")
-                errors.append(str(output))
+                #errors.append(str(output))
                 pass
 
             try:
@@ -63,9 +65,6 @@ def index():
 
             #return render_template("index.html", helpWords=HELP_WORDS_LIST, query="In Parsing Thread")
 
-            # t1 = threading.Thread(target=parsingThread, args=queryfromPOST)
-            # t1.start()
-            # t1.join()
 
 
             go = True
