@@ -440,8 +440,38 @@ class SQLBackEnd:
     # Modifies:
     # Effects:
 
-    def getLengthBySong(self, songName, tableName="TOP50"):
-        SQLString = "SELECT Length, TrackName FROM " + tableName + " WHERE TrackName = '" + songName + "'"
+    def getSongPopularity(self, songName, tableName = "TOP50"):
+        sqlString = "SELECT tempo, song FROM " + tableName + " WHERE song = '" + songName + "'"
+        query = self.currentTerminal.execute(sqlString).fetchall()
+        self.currentConnection.commit()
+        songPopularity = query[0]
+        if(self.debug):
+            print(sqlString)
+            print(query)
+            print(songPopularity)
+        return songPopularity
+
+    # Requires:
+    # Modifies:
+    # Effects:
+
+    def getSongTempo(self, songName, tableName = "TOP50"):
+        sqlString = "SELECT tempo, song FROM " + tableName + " WHERE song = '" + songName + "'"
+        query = self.currentTerminal.execute(sqlString).fetchall()
+        self.currentConnection.commit()
+        songTempo = query[0]
+        if(self.debug):
+            print(sqlString)
+            print(query)
+            print(songTempo)
+        return songTempo
+
+    # Requires:
+    # Modifies:
+    # Effects:
+
+    def getSongLength(self, songName, tableName = "TOP50"):
+        SQLString = "SELECT length, song FROM " + tableName + " WHERE song = '" + songName + "'"
         query = self.currentTerminal.execute(SQLString).fetchall()
         self.currentConnection.commit()
         songLength = query[0]
@@ -488,8 +518,8 @@ class SQLBackEnd:
     # Modifies:
     # Effects:
 
-    def getPopularityByArtist(self, artistName, tableName="TOP50"):
-        SQLString = "SELECT Popularity, ArtistName FROM " + tableName + " WHERE ArtistName ='" + artistName + "'"
+    def getTempoByArtist(self, artistName, tableName="TOP50"):
+        SQLString = "SELECT tempo, ArtistName FROM " + tableName + " WHERE ArtistName ='" + artistName + "'"
         query = self.currentTerminal.execute(SQLString).fetchall()
         self.currentConnection.commit()
         summation = 0
