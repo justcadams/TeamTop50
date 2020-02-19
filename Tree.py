@@ -4,8 +4,8 @@ from keywords import *
 # Binary tree for constructing and executing query commands
 class Tree():
     def __init__(self, data):
-        # Tree is initialized with some data. 
-        # Right and left children are initialized to None 
+        # Tree is initialized with some data.
+        # Right and left children are initialized to None
         self.data = data
         self.rc = None
         self.lc = None
@@ -14,14 +14,14 @@ class Tree():
         # Adds a left child. lc can either be another tree or data.
         if isinstance(lc, Tree):
             self.lc = lc
-        else: 
+        else:
             self.lc = Tree(lc)
 
     def setRightChild(self, rc):
         # Sets a right child. rc can either be another tree or data.
         if isinstance(rc, Tree):
             self.rc = rc
-        else: 
+        else:
             self.rc = Tree(rc)
 
     def isLeaf(self):
@@ -29,7 +29,7 @@ class Tree():
         return self.rc is None and self.lc is None
 
     def evaluate(self):
-        # Evaluates value of tree by carrying out operations and 
+        # Evaluates value of tree by carrying out operations and
         # doing database queries; this is where backend should connect
         if self.isLeaf():
             return self.data

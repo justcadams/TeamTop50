@@ -4,6 +4,7 @@ import sqlite3
 import psutil
 import regex
 import urllib3
+from difflib import SequenceMatcher
 import tkinter as tk
 import pandas as pd
 from tkinter import filedialog
@@ -25,17 +26,21 @@ class SQLBackEnd:
         self.connectToServer(filename)
         # Store the user's debug setting.
         self.debug = debug
+        # Upload the songs
+        self.uploadCSV('TOP50')
+        # Upload the artists
+        self.uploadCSV('TOP50ARTISTS')
 
-    # Requires:
-    # Modifies:
-    # Effects:
+    # Requires: Nothing
+    # Modifies: Nothing
+    # Effects: Returns the debug setting for testing, logging, and debugging on this virtual server.
 
     def getDebugSetting(self):
         return self.debug
 
-    # Requires:
-    # Modifies:
-    # Effects:
+    # Requires: Boolean setting - The desired setting for testing, logging, and debugging on this virtual server.
+    # Modifies: Boolean debug - The current setting for testing, logging, and debugging on this virtual server.
+    # Effects: Changes the debug boolean to setting's value.
 
     def setDebugSetting(self, setting):
         self.debug = setting
@@ -48,20 +53,20 @@ class SQLBackEnd:
         # TODO: Mount remote file system.
         try:
             # Attempt to connect to localhost.
-            self.newConnection = sqlite3.connect(filename)
+            newConnection = sqlite3.connect(filename)
             # Store connection and filename for later reference.
-            self.databaseConnections.append(tuple((self.newConnection, filename)))
+            self.databaseConnections.append(tuple((newConnection, filename)))
             # Update current connection if the server connects with this terminal.
-            self.currentConnection = self.newConnection
+            self.currentConnection = newConnection
             # Update current terminal to reflect the current cursor location.
-            self.currentTerminal = self.newConnection.cursor()
+            self.currentTerminal = newConnection.cursor()
         except Error as e:
             # If there is an error print out the error to the log.
             print(e)
 
-    # Requires:
-    # Modifies:
-    # Effects:
+    # Requires: Integer connectionNumber - The number representing the connectionNumber in the array.
+    # Modifies: Nothing.
+    # Effects: Changes the current connnection SQL queries are dispatched to.
 
     def changeConnection(self, connectionNumber):
         # Ensure the connection this terminal is changing to is within the range of available server connections.
@@ -71,9 +76,9 @@ class SQLBackEnd:
             # Update the location of this terminal's cursor.
             self.currentTerminal = self.currentConnection.cursor()
 
-    # Requires:
-    # Modifies:
-    # Effects:
+    # Requires: Nothing
+    # Modifies: Nothing
+    # Effects: Prints out the connection number and the virtual memory address or URI for the connections on this virtual server.
 
     def displayConnections(self):
         # Select all of the objects in the database connection list.
@@ -81,19 +86,20 @@ class SQLBackEnd:
             # Print out the connection uri and the filename.
             print("Connection " + str(conn[0]) + " at " + conn[1] + ".")
 
-    # Requires:
-    # Modifies:
-    # Effects:
+    # Requires: Nothing
+    # Modifies: Nothing
+    # Effects: Prints out the current connection's memory address or URI.
 
     def displayCurrentConnection(self):
         print("Connection " + str(self.currentConnection) + " is selected.")
 
-    # Requires:
-    # Modifies:
-    # Effects:
+    # Requires: Integer connectionNumber - The number representing the connectionNumber in the array.
+    # Modifies: The connectionNumber specified by closing the connection and removing the connection from the databaseConnections list.
+    # Effects: Disconnects from the specified server, and removes the connection from the databaseConnections list.
 
-    def disconnectFromServer(self, listLocation):
-        sqlite3.disconnect(self.databaseConnection[listLocation][1])
+    def disconnectFromServer(self, connectionNumber):
+        sqlite3.disconnect(self.databaseConnections[connectionNumber][0])
+        self.databaseConnections.remove(connectionNumber)
 
     # Requires:
     # Modifies:
@@ -201,13 +207,13 @@ class SQLBackEnd:
     # Modifies:
     # Effects:
 
-    def uploadCSV(self):
+    def uploadCSV(self, tableName):
         root = tk.Tk()
         root.withdraw()
         filePath = filedialog.askopenfilename()
         songs = pd.read_csv(filePath)
         # dtypes = {'ID': 'INTEGER', 'Track.Name': 'str', 'Artist.Name': 'str', 'Genre': 'str', 'Beats.Per.Minute': 'INTEGER', 'Energy': 'INTEGER', 'Danceability': 'INTEGER', 'Loudness': 'INTEGER', 'Liveness': 'INTEGER', 'Valence': 'INTEGER', 'Length': 'INTEGER', 'Acousticness': 'INTEGER', 'Speechiness': 'INTEGER', 'Popularity': 'INTEGER'}
-        songs.to_sql('TOP50', self.currentConnection, if_exists='append', index=False)
+        songs.to_sql(tableName, self.currentConnection, if_exists='append', index=False)
         self.currentConnection.commit()
 
     # Requires:
@@ -301,10 +307,68 @@ class SQLBackEnd:
 
     def selectAllFromTable(self, tableName):
         SQLString = "SELECT * FROM " + tableName
-        databaseString = self.currentTerminal.execute(SQLString).fetchall()
+        query = self.currentTerminal.execute(SQLString).fetchall()
         self.currentConnection.commit()
-        print(databaseString)
-        return databaseString
+        if (self.debug):
+            print(query)
+        return query
+
+    # Requires:
+    # Modifies:
+    # Effects:
+
+    def compareObjectsByParameter(self, firstObject, secondObject, parameter, tableName="TOP50"):
+        SQLString = "SELECT TrackName FROM " + tableName
+        query = self.currentTerminal.execute(SQLString).fetchall()
+        self.currentConnection.commit()
+        bestMatchFirstObjectTrackNameEntropy = SequenceMatcher(a=firstObject, b=query[0]).ratio()
+        bestMatchFirstObjectTrackNameValue = 0
+        bestMatchSecondObjectTrackNameEntropy = SequenceMatcher(a=secondObject, b=query[0]).ratio()
+        bestMatchSecondObjectTrackNameValue = 0
+        count = 0
+        for tuple in query:
+            if (SequenceMatcher(a=firstObject, b=tuple[0]).ratio() > bestMatchFirstObjectTrackNameEntropy):
+                bestMatchFirstObjectTrackNameEntropy = SequenceMatcher(a=firstObject, b=tuple[0]).ratio()
+                bestMatchFirstObjectTrackNameValue = count
+            if (SequenceMatcher(a=firstObject, b=tuple[0]).ratio() > bestMatchSecondObjectTrackNameEntropy):
+                bestMatchFirstObjectTrackNameEntropy = SequenceMatcher(a=secondObject, b=tuple[1]).ratio()
+                bestMatchSecondObjectTrackNameValue = count
+            count = count + 1
+        SQLString = "SELECT ArtistName FROM " + tableName
+        query = self.currentTerminal.execute(SQLString).fetchall()
+        self.currentConnection.commit()
+        bestMatchFirstObjectArtistNameEntropy = SequenceMatcher(a=firstObject, b=query[0]).ratio()
+        bestMatchFirstObjectArtistNameValue = 0
+        bestMatchSecondObjectArtistNameEntropy = SequenceMatcher(a=secondObject, b=query[0]).ratio()
+        bestMatchSecondObjectArtistNameValue = 0
+        count = 0
+        for tuple in query:
+            if (SequenceMatcher(a=firstObject, b=tuple[0]).ratio() > bestMatchFirstObjectArtistNameEntropy):
+                bestMatchFirstObjectArtistNameEntropy = SequenceMatcher(a=firstObject, b=tuple[0]).ratio()
+                bestMatchFirstObjectArtistNameValue = count
+            if (SequenceMatcher(a=firstObject, b=tuple[0]).ratio() > bestMatchSecondObjectArtistNameEntropy):
+                bestMatchSecondObjectArtistNameEntropy = SequenceMatcher(a=firstObject, b=tuple[1]).ratio()
+                bestMatchSecondObjectArtistNameValue = count
+            count = count + 1
+        objectEntropy = list(bestMatchFirstObjectTrackNameEntropy, bestMatchSecondObjectTrackNameEntropy,
+                             bestMatchFirstObjectArtistNameEntropy, bestMatchSecondObjectArtistNameEntropy)
+        bestEntropy = max(objectEntropy)
+        objectType = 0
+        returnValue = list()
+        for i in range(0, 3):
+            if (bestEntropy == objectEntropy[i]):
+                objectType = i
+        if (objectType < 2):
+            SQLString = "SELECT TrackName, " + parameter + " FROM " + tableName
+            query = self.currentTerminal.execute(SQLString).fetchall()
+            self.currentConnection.commit()
+            returnValue = list(query[bestMatchFirstObjectArtistNameValue], query[bestMatchSecondObjectArtistNameValue])
+        else:
+            SQLString = "SELECT TrackName, " + parameter + " FROM " + tableName
+            query = self.currentTerminal.execute(SQLString).fetchall()
+            self.currentConnection.commit()
+            returnValue = list(query[bestMatchFirstObjectTrackNameValue], query[bestMatchSecondObjectTrackNameValue])
+        return returnValue
 
     # Requires:
     # Modifies:
@@ -312,10 +376,16 @@ class SQLBackEnd:
 
     def getSongsbyArtist(self, artistName, tableName="TOP50"):
         SQLString = "SELECT TrackName, ArtistName FROM " + tableName + " WHERE ArtistName ='" + artistName + "'"
-        databaseString = self.currentTerminal.execute(SQLString).fetchall()
+        query = self.currentTerminal.execute(SQLString).fetchall()
         self.currentConnection.commit()
-        print(databaseString)
-        return databaseString
+        songList = list()
+        for val in query[0]:
+            songList.append(val)
+        if (self.debug):
+            print(SQLString)
+            print(query)
+            print(songList)
+        return songList
 
     # Requires:
     # Modifies:
@@ -323,10 +393,14 @@ class SQLBackEnd:
 
     def getPopularityBySong(self, songName, tableName="TOP50"):
         SQLString = "SELECT Popularity, TrackName FROM " + tableName + " WHERE TrackName ='" + songName + "'"
-        databaseString = self.currentTerminal.execute(SQLString).fetchall()
+        query = self.currentTerminal.execute(SQLString).fetchall()
         self.currentConnection.commit()
-        print(databaseString)
-        return databaseString
+        popularity = query[0]
+        if (self.debug):
+            print(SQLString)
+            print(query)
+            print(popularity)
+        return popularity
 
     # Requires:
     # Modifies:
@@ -334,10 +408,14 @@ class SQLBackEnd:
 
     def getArtistBySong(self, songName, tableName="TOP50"):
         SQLString = "SELECT ArtistName, TrackName FROM " + tableName + " WHERE TrackName = '" + songName + "'"
-        databaseString = self.currentTerminal.execute(SQLString).fetchall()
+        query = self.currentTerminal.execute(SQLString).fetchall()
         self.currentConnection.commit()
-        print(databaseString)
-        return databaseString
+        artistName = query[0]
+        if (self.debug):
+            print(SQLString)
+            print(query)
+            print(artistName)
+        return artistName
 
     # Requires:
     # Modifies:
@@ -345,10 +423,14 @@ class SQLBackEnd:
 
     def getLengthBySong(self, songName, tableName="TOP50"):
         SQLString = "SELECT Length, TrackName FROM " + tableName + " WHERE TrackName = '" + songName + "'"
-        databaseString = self.currentTerminal.execute(SQLString).fetchall()
+        query = self.currentTerminal.execute(SQLString).fetchall()
         self.currentConnection.commit()
-        print(databaseString)
-        return databaseString
+        songLength = query[0]
+        if (self.debug):
+            print(SQLString)
+            print(query)
+            print(songLength)
+        return songLength
 
     # Requires:
     # Modifies:
@@ -356,10 +438,14 @@ class SQLBackEnd:
 
     def getDanceabilityBySong(self, songName, tableName="TOP50"):
         SQLString = "SELECT Danceability, TrackName FROM " + tableName + " WHERE TrackName = '" + songName + "'"
-        databaseString = self.currentTerminal.execute(SQLString).fetchall()
+        query = self.currentTerminal.execute(SQLString).fetchall()
         self.currentConnection.commit()
-        print(databaseString)
-        return databaseString
+        danceability = query[0]
+        if (self.debug):
+            print(SQLString)
+            print(query)
+            print(danceability)
+        return danceability
 
     # Requires:
     # Modifies:
@@ -367,14 +453,16 @@ class SQLBackEnd:
 
     def getDanceabilityByArtist(self, artistName, tableName="TOP50"):
         SQLString = "SELECT Danceability, ArtistName FROM " + tableName + " WHERE ArtistName = '" + artistName + "'"
-        databaseString = self.currentTerminal.execute(SQLString).fetchall()
+        query = self.currentTerminal.execute(SQLString).fetchall()
         self.currentConnection.commit()
         summation = 0
-        for val in databaseString:
+        for val in query:
             summation = val[0] + summation
-        average = summation / len(databaseString)
-        print(databaseString)
-        print(average)
+        average = summation / len(query)
+        if (self.debug):
+            print(SQLString)
+            print(query)
+            print(average)
         return average
 
     # Requires:
@@ -383,14 +471,16 @@ class SQLBackEnd:
 
     def getPopularityByArtist(self, artistName, tableName="TOP50"):
         SQLString = "SELECT Popularity, ArtistName FROM " + tableName + " WHERE ArtistName ='" + artistName + "'"
-        databaseString = self.currentTerminal.execute(SQLString).fetchall()
+        query = self.currentTerminal.execute(SQLString).fetchall()
         self.currentConnection.commit()
         summation = 0
-        for val in databaseString:
+        for val in query:
             summation = val[0] + summation
-        average = summation / len(databaseString)
-        print(databaseString)
-        print(average)
+        average = summation / len(query[0])
+        if (self.debug):
+            print(SQLString)
+            print(query)
+            print(average)
         return average
 
     # Requires:
@@ -399,15 +489,47 @@ class SQLBackEnd:
 
     def getLengthByArtist(self, artistName, tableName="TOP50"):
         SQLString = "SELECT Length, ArtistName FROM " + tableName + " WHERE ArtistName ='" + artistName + "'"
-        databaseString = self.currentTerminal.execute(SQLString).fetchall()
+        query = self.currentTerminal.execute(SQLString).fetchall()
         self.currentConnection.commit()
         summation = 0
-        for val in databaseString:
-            summation = val[1] + summation
-        average = summation / len(databaseString)
-        print(databaseString)
-        print(average)
+        for val in query:
+            summation = val[0] + summation
+        average = summation / len(query[0])
+        if (self.debug):
+            print(SQLString)
+            print(query)
+            print(average)
         return average
+
+    # Requires:
+    # Modifies:
+    # Effects:
+
+    def getBirthplaceByArtist(self, artistName, tableName="TOP50ARTISTS"):
+        SQLString = "SELECT Birthplace, ArtistName FROM " + tableName + " WHERE ArtistName ='" + artistName + "'"
+        query = self.currentTerminal.execute(SQLString).fetchall()
+        self.currentConnection.commit()
+        birthplace = query[0]
+        if (self.debug):
+            print(SQLString)
+            print(query)
+            print(birthplace)
+        return birthplace
+
+    # Requires:
+    # Modifies:
+    # Effects:
+
+    def getBirthdayByArtist(self, artistName, tableName="TOP50ARTISTS"):
+        SQLString = "SELECT Birthday, ArtistName FROM " + tableName + " WHERE ArtistName ='" + artistName + "'"
+        query = self.currentTerminal.execute(SQLString).fetchall()
+        self.currentConnection.commit()
+        birthday = query[0]
+        if (self.debug):
+            print(SQLString)
+            print(query)
+            print(birthday)
+        return birthday
 
     # Requires:
     # Modifies:
@@ -416,75 +538,84 @@ class SQLBackEnd:
     def regexCheck(self):
         return False
 
+    def testBackEnd(self):
+        # Testing SQLBackEnd class.
+        virtualServer = SQLBackEnd('testA.mdf')
+        virtualServer.displayConnections()
+        virtualServer.connectToServer('testB.mdf')
+        virtualServer.connectToServer('testC.mdf')
+        virtualServer.displayConnections()
+        virtualServer.changeConnection(0)
+        virtualServer.displayCurrentConnection()
+        virtualServer.uploadCSV('TOP50')
+        virtualServer.uploadCSV('TOP50ARTISTS')
+        virtualServer.selectAllFromTable('TOP50')
+        virtualServer.getSongsbyArtist('Marshmello')
+        virtualServer.getPopularityBySong('Happier')
+        virtualServer.getPopularityByArtist('Marshmello')
+        virtualServer.getDanceabilityBySong('Happier')
+        virtualServer.getDanceabilityByArtist('Marshmello')
+        virtualServer.getLengthBySong('Happier')
+        virtualServer.getLengthByArtist('Marshmello')
 
 # Justin's workspace
 
-# Testing SQLBackEnd class.
-
-if __name__ == "__main__":
-    virtualServer = SQLBackEnd('test1.mdf')
-    virtualServer.displayConnections()
-    virtualServer.connectToServer('test2.mdf')
-    virtualServer.connectToServer('test3.mdf')
-    virtualServer.displayConnections()
-    virtualServer.changeConnection(0)
-    virtualServer.displayCurrentConnection()
-    virtualServer.uploadCSV()
-    virtualServer.selectAllFromTable('TOP50')
-    virtualServer.getSongsbyArtist('Marshmello')
-    virtualServer.getPopularityBySong('Happier')
-    virtualServer.getPopularityByArtist('Marshmello')
-    virtualServer.getDanceabilityBySong('Happier')
-    virtualServer.getDanceabilityByArtist('Marshmello')
-    virtualServer.getLengthBySong('Happier')
-    virtualServer.getLengthByArtist('Marshmello')
+# def getSongLength(self, SongTitle):
+#     #Open a connection with database and collect the proper row
+#     query =  self.currentTerminal.execute("SELECT " + SongTitle + "FROM ##NAME OF TABLE##")
 
 # Matt's workspace
-'''
-    def getSongLength(self, SongTitle):
-        #Open a connection with database and collect the proper row
-        databaseString =  self.currentTerminal.execute("SELECT " + SongTitle + "FROM ##NAME OF TABLE##")
+# def getSongLength(self, SongTitle):
+#     #Open a connection with database and collect the proper row
+#     databaseString =  self.currentTerminal.execute("SELECT " + SongTitle + "FROM ##NAME OF TABLE##")
+#
+#     #from that row navigate to the song length and pull from table
+#     #return this integer
+#     return "getSongLength is currently being worked on"
 
-        #from that row navigate to the song length and pull from table
-        #return this integer
-        return "getSongLength is currently being worked on"
+
+# def getSongTempo(self, SongTitle):
+#     databaseString = self.currentTerminal.execute("SELECT " + SongTitle + "FROM ##NAME OF TABLE##")
+#     #From connection with database find the row associated with the song
+#     #Collect bpm data from the table
+#     #return this integer
+#     return "getSongTempo is currently being worked on"
+
+# def getArtistPopularity(self, Artist):
+#     databaseString = ""
+#     # from an existing connection with database find each of the rows with songs associated with the artist
+#     # Hold each of these songs individual popularities
+#     # Perform an average calculation on these songs popularity
+#     # Return the integer associated with popularitry between 0 and 100, 100 being very popular
+
+# def getArtistDanceability(self, SongTitle):
+#     databaseString = ""
+#     # from an existing connection with database find each of the rows with songs associated with the artist
+#     # Hold each of these songs individual danceability ratings
+#     # Perform an average calculation on these song's danceability ratings
+#     # Return the integer associated with danceability between 0 and 100, 100 being very danceable
 
 
-    def getSongTempo(self, SongTitle):
-        databaseString = self.currentTerminal.execute("SELECT " + SongTitle + "FROM ##NAME OF TABLE##")
-        #From connection with database find the row associated with the song
-        #Collect bpm data from the table
-        #return this integer
-        return "getSongTempo is currently being worked on"
-
-    def getArtistPopularity(self, Artist):
-        databaseString = ""
-        # from an existing connection with database find each of the rows with songs associated with the artist
-        # Hold each of these songs individual popularities
-        # Perform an average calculation on these songs popularity
-        # Return the integer associated with popularitry between 0 and 100, 100 being very popular
-
-    def getArtistDanceability(self, SongTitle):
-        databaseString = ""
-        # from an existing connection with database find each of the rows with songs associated with the artist
-        # Hold each of these songs individual danceability ratings
-        # Perform an average calculation on these song's danceability ratings
-        # Return the integer associated with danceability between 0 and 100, 100 being very danceable
 # # Establish a connection to a local database.
 # conn = sqlite3('test.db')
+
 # # Create a cursor object to execute SQL commands.
 # c = conn.cursor()
+
 # # Delete the table if it exists
 # c.execute("IF EXISTS(SELECT 1 FROM INFORMATION_SCHEMA.TABLES WHERE TABLE_TYPE='test' AND TABLE_NAME='stocks') ELSE(DROP TABLE stocks)")
+
 # # Create a table named stocks
 # c.execute("IF NOT EXISTS(SELECT * from stocks) CREATE TABLE stocks (Date VARCHAR(10), Action VARCHAR(4), Ticker VARCHAR(4), Quantity INTEGER, Price Double)")
+
 # # Select information from the table
 # c.execute("SELECT * FROM stocks")
+
 # # Insert a row of data.
 # c.execute("INSERT INTO stocks VALUES ('2006-01-05','BUY','RHAT',100,35.14)")
+
 # # Save (commit) the changes
 # conn.commit()
+
 # # Close the connection and verify the system operates as specified.
 # conn.close()
-'''
-
