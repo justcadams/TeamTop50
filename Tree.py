@@ -38,35 +38,35 @@ class Tree:
         else:
             # UNARY COMMANDS
             if self.data == "songs":
-                return testCommands.virtualServer.getSongsByArtist(self.rc.evaluate)[0]
+                return testCommands.virtualServer.getSongsByArtist(self.rc.evaluate)
             elif self.data == "artist":
-                return testCommands.virtualServer.getArtistBySong(self.rc.evaluate)[0]
+                return testCommands.virtualServer.getArtistBySong(self.rc.evaluate)
             elif self.data == "length":
-                return testCommands.virtualServer.getLength(self.rc.evaluate)[0]
+                return testCommands.virtualServer.getLength(self.rc.evaluate)
             elif self.data == "tempo":
-                return testCommands.virtualServer.getTempo(self.rc.evaluate)[0]
+                return testCommands.virtualServer.getTempo(self.rc.evaluate)
             elif self.data == "popularity":
-                return testCommands.virtualServer.getPopularity(self.rc.evaluate)[0]
+                return testCommands.virtualServer.getPopularity(self.rc.evaluate)
             elif self.data == "danceability":
-                return testCommands.virtualServer.getDanceability(self.rc.evaluate)[0]
+                return testCommands.virtualServer.getDanceability(self.rc.evaluate)
             elif self.data == "genre":
-                return testCommands.virtualServer.getSongGenre(self.rc.evaluate)[0]
+                return testCommands.virtualServer.getSongGenre(self.rc.evaluate)
             elif self.data == "energy":
-                return testCommands.virtualServer.getEnergy(self.rc.evaluate)[0]
+                return testCommands.virtualServer.getEnergy(self.rc.evaluate)
             elif self.data == "loudness":
-                return testCommands.virtualServer.getLoudness(self.rc.evaluate)[0]
+                return testCommands.virtualServer.getLoudness(self.rc.evaluate)
             elif self.data == "liveliness":
-                return testCommands.virtualServer.getLiveliness(self.rc.evaluate)[0]
+                return testCommands.virtualServer.getLiveliness(self.rc.evaluate)
             elif self.data == "valence":
-                return testCommands.virtualServer.getValence(self.rc.evaluate)[0]
+                return testCommands.virtualServer.getValence(self.rc.evaluate)
             elif self.data == "acousticness":
-                return testCommands.virtualServer.getAccousticness(self.rc.evaluate)[0]
+                return testCommands.virtualServer.getAccousticness(self.rc.evaluate)
             elif self.data == "speechiness":
-                return testCommands.virtualServer.getSpeechiness(self.rc.evaluate)[0]
+                return testCommands.virtualServer.getSpeechiness(self.rc.evaluate)
             elif self.data == "birthplace":
-                return testCommands.virtualServer.getBirthplace(self.rc.evaluate)[0]
+                return testCommands.virtualServer.getBirthplace(self.rc.evaluate)
             elif self.data == "birthday":
-                return testCommands.virtualServer.getBirthday(self.rc.evaluate)[0]
+                return testCommands.virtualServer.getBirthday(self.rc.evaluate)
             else:
                 return "ERROR"
 
