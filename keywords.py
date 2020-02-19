@@ -1,4 +1,4 @@
-UNARY_KEYWORDS = ["songs", "artist", "popularity",
+UNARY_KEYWORDS = ["song", "songs", "artist", "popularity",
                   "danceability", "genre", "length",
                   "tempo", "energy", "loudness",
                   "liveliness", "valence", "acousticness",
