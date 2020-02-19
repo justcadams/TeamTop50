@@ -421,7 +421,7 @@ class SQLBackEnd:
         query = self.currentTerminal.execute(sqlString).fetchall()
         self.currentConnection.commit()
         popularity = 0
-        if(isinstance(query) == list() and len(query) > 1):
+        if(isinstance(query,list) and len(query) > 1):
             sum = 0
             for val in query:
                 sum += val[0]
