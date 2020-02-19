@@ -42,19 +42,18 @@ def index():
             queryfromPOST = request.form['submission']
             errors.append(queryfromPOST)
             errors.append(type(queryfromPOST))
-
+            tree = parserA.parse(queryfromPOST)
+            errors.append(str(tree))
+            errors.append(type(tree))
 
             try:
-                tree = parserA.parse(queryfromPOST).evaluate()
-                errors.append(str(tree))
-                errors.append(type(tree))
-                output = [tree]
-                # errors.extend(tree.evaluate())
-                # data.extend(tree.evaluate())
+                output = []
+                errors.append(tree.evaluate())
+                data.append(tree.evaluate())
 
             except:
                 errors.append("Broken Output Function")
-                #errors.append(str(output))
+                errors.append(str(output))
                 pass
 
             try:
