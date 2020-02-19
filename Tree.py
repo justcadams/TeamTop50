@@ -1,8 +1,5 @@
-from testCommands import *
-from keywords import *
-
 # Binary tree for constructing and executing query commands
-class Tree():
+class Tree:
     def __init__(self, data):
         # Tree is initialized with some data.
         # Right and left children are initialized to None
@@ -28,22 +25,27 @@ class Tree():
         # Checks if this Tree has any children
         return self.rc is None and self.lc is None
 
+    @property
     def evaluate(self):
+        import keywords
+        import testCommands
         # Evaluates value of tree by carrying out operations and
         # doing database queries; this is where backend should connect
         if self.isLeaf():
             return self.data
-        elif self.data not in KEYWORDS:
+        elif self.data not in keywords.KEYWORDS:
             return "ERROR: Invalid command."
         else:
+            if self.data == "songs":
+                return testCommands.virtualServer.getSongsbyArtist(self.rc.evaluate)
             if self.data == "artist":
-                return getSongArtist(self.rc.evaluate())
+                return testCommands.virtualServer.getSongbyArtist(self.rc.evaluate)
             elif self.data == "length":
-                return getSongLength(self.rc.evaluate())
+                return virtualServer.getSongLength(self.rc.evaluate)
             elif self.data == "tempo":
-                return getSongTempo(self.rc.evaluate())
+                return virtualServer.getSongTempo(self.rc.evaluate)
             elif self.data == "popularity":
-                return getSongPopularity(self.rc.evaluate())
+                return virtualServer.getSongPopularity(self.rc.evaluate)
             else:
                 return "ERROR"
 
