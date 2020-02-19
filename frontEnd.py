@@ -1,4 +1,4 @@
-from parser import *
+from parserA import *
 from keywords import *
 from backEnd import SQLBackEnd
 

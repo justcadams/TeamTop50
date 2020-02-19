@@ -1,7 +1,15 @@
-from parser import *
+from flask import Flask
+from flask import Blueprint, render_template, request
+from parserA import parse
+from parserA import buildTree
+from keywords import *
+from backEnd import SQLBackEnd
 
-s = "more popular 'shape of you' and more popular 'tik tok' and 'timber'"
-print(str(parse(s)))
+s = "popularity of 'Shawn Mendes'"
+commandTree = parse(s)
+output = commandTree.evaluate()
+print(output)
+
 
 
 

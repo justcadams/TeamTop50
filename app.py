@@ -1,6 +1,6 @@
 from flask import Flask
 from flask import Blueprint, render_template, request
-from parser import *
+from parserA import *
 from keywords import *
 from backEnd import SQLBackEnd
 
@@ -19,7 +19,10 @@ def index():
     if request.method == "POST":
         try:
             queryfromPOST = request.form['submission']
-       
+            commandTree = parse(queryfromPOST)
+            output = commandTree.evaluate()
+            data.append(output)
+
             go = True
             loaded = True
 
