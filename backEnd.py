@@ -375,7 +375,7 @@ class SQLBackEnd:
         self.currentConnection.commit()
         songList = list()
         for val in query:
-            songList.append(val)
+            songList.append(val[0])
         if (self.debug):
             print(sqlString)
             print(query)
@@ -414,11 +414,11 @@ class SQLBackEnd:
             else:
                 sqlString = "SELECT popularity, artist FROM " + tableName + " WHERE artist ='" + artistName[0] + "'"
         else:
-            sqlString = "SELECT popularity, song FROM " + tableName + " WHERE song ='" + songName + "'"
+            sqlString = "SELECT popularity, song FROM " + tableName + " WHERE song ='" + songName[0] + "'"
         query = self.currentTerminal.execute(sqlString).fetchall()
         self.currentConnection.commit()
         popularity = 0
-        if(isinstance(query,list) and len(query) > 1):
+        if(isinstance(query,list) and len(query) == 1):
             sum = 0
             for val in query:
                 sum += val[0]
@@ -468,7 +468,7 @@ class SQLBackEnd:
     # Modifies:
     # Effects:
 
-    def getDanceability(self, objectName, tableName="TOP50"):
+    def getTempo(self, objectName, tableName="TOP50"):
         songName = self.findOjectByParameter(objectName, "song")
         sqlString = ""
         artistName = ""
@@ -478,41 +478,50 @@ class SQLBackEnd:
                 message = "We can not find an artist or song that matches your search query."
                 return message
             else:
-                sqlString = "SELECT danceability, artist FROM " + tableName + " WHERE artist ='" + artistName[0] + "'"
+                sqlString = "SELECT tempo, artist FROM " + tableName + " WHERE artist ='" + artistName[0] + "'"
         else:
-            sqlString = "SELECT danceability, song FROM " + tableName + " WHERE song ='" + songName[0] + "'"
+            sqlString = "SELECT tempo, song FROM " + tableName + " WHERE song ='" + songName[0] + "'"
         query = self.currentTerminal.execute(sqlString).fetchall()
         self.currentConnection.commit()
-        danceability = 0
+        tempo = 0
         if(isinstance(query,list) and len(query) > 1):
             sum = 0
             for val in query:
                 sum += val[0]
-            danceability = sum/len(query)
+            tempo = sum/len(query)
         else:
-            danceability = query[0]
+            tempo = query[0]
         if (self.debug):
             print(sqlString)
             print(query)
-            print(danceability)
-        return danceability
-
-
+            print(tempo)
+        return tempo
 
     # Requires:
     # Modifies:
     # Effects:
 
     def getArtistBySong(self, songName, tableName="TOP50"):
-        SQLString = "SELECT ArtistName, TrackName FROM " + tableName + " WHERE TrackName = '" + songName + "'"
-        query = self.currentTerminal.execute(SQLString).fetchall()
+        songName = self.findOjectByParameter(songName, "song")
+        sqlString = ""
+        artistName = ""
+        if(songName == None):
+            artistName = self.findOjectByParameter(songName, "artist")
+            if(artistName == None):
+                message = "We can not find an artist or song that matches your search query."
+                return message
+            else:
+                sqlString = "SELECT artist, song FROM " + tableName + " WHERE artist ='" + artistName[0] + "'"
+        else:
+            sqlString = "SELECT artist, song FROM " + tableName + " WHERE song ='" + songName[0] + "'"
+        query = self.currentTerminal.execute(sqlString).fetchall()
         self.currentConnection.commit()
-        artistName = query[0]
+        artistName = query
         if (self.debug):
-            print(SQLString)
+            print(sqlString)
             print(query)
             print(artistName)
-        return artistName
+        return artistName[0][0]
 
     # Requires:
     # Modifies:
