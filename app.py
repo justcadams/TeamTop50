@@ -15,24 +15,39 @@ main = Blueprint("main", __name__)
 def index():
     errors = []
     data = []
+
     if request.method == "POST":
         try:
-            query = request.form['submission']
-            data.append(query)
+            queryfromPOST = request.form['submission']
+       
             go = True
-            loaded = False
+            loaded = True
 
-            if query == "help":
-                return render_template("index.html", helpWords=HELP_WORDS_LIST)
+            if queryfromPOST == "help":
 
-            if query =="load":
+                return render_template("index.html", helpWords=HELP_WORDS_LIST, query=queryfromPOST)
 
+            elif queryfromPOST == "load":
+                if loaded:
+                    pass
+                    return "<h1>Hello world4</h1>"
+                else:
+                    virtualServer = SQLBackEnd('server.mdf')
+                    virtualServer.uploadCSV()
+                    loaded = True
 
-            return render_template("index.html", Query=data)
+            elif not loaded:
+                return render_template("index.html", data="CSV needs to be loaded. Type 'Load'", helpWords=HELP_WORDS_LIST, query=queryfromPOST)
+
+            elif go:
+                return render_template("index.html", data=data, helpWords=HELP_WORDS_LIST, query=queryfromPOST)
+
+            else:
+                return render_template("index.html", data=data, helpWords=HELP_WORDS_LIST, query=queryfromPOST)
 
         except:
             errors.append("Unable to process your request.")
-    return render_template("index.html")
+    return render_template("index.html", helpWords=HELP_WORDS_LIST)
 
 
 
