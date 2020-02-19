@@ -497,14 +497,12 @@ class SQLBackEnd:
             print(tempo)
         return tempo
 
-
-
     # Requires:
     # Modifies:
     # Effects:
 
     def getArtistBySong(self, songName, tableName="TOP50"):
-        SQLString = "SELECT ArtistName, TrackName FROM " + tableName + " WHERE TrackName = '" + songName + "'"
+        SQLString = "SELECT artist, song FROM " + tableName + " WHERE song = '" + songName + "'"
         query = self.currentTerminal.execute(SQLString).fetchall()
         self.currentConnection.commit()
         artistName = query[0]
