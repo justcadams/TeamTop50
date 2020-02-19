@@ -41,11 +41,11 @@ class Tree:
             if self.data == "artist":
                 return testCommands.virtualServer.getSongbyArtist(self.rc.evaluate)
             elif self.data == "length":
-                return virtualServer.getSongLength(self.rc.evaluate)
+                return testCommands.virtualServer.getSongLength(self.rc.evaluate)
             elif self.data == "tempo":
-                return virtualServer.getSongTempo(self.rc.evaluate)
+                return testCommands.virtualServer.getSongTempo(self.rc.evaluate)
             elif self.data == "popularity":
-                return virtualServer.getSongPopularity(self.rc.evaluate)
+                return testCommands.virtualServer.getSongPopularity(self.rc.evaluate)
             else:
                 return "ERROR"
 
