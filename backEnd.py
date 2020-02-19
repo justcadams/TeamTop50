@@ -1,15 +1,13 @@
 # Import sqlite3 and relevant tools.
 import os
 import sqlite3
-import psutil
-import regex
-import urllib3
+import warnings
 from difflib import SequenceMatcher
 import tkinter as tk
 import pandas as pd
 from tkinter import filedialog
 from sqlite3 import Error
-
+warnings.simplefilter(action='ignore', category=UserWarning)
 
 class SQLBackEnd:
     # databaseConnection contains a tuple with the sqlite3 connection object first and the filename string object second.
@@ -26,8 +24,11 @@ class SQLBackEnd:
         self.connectToServer(filename)
         # Store the user's debug setting.
         self.debug = debug
+        # Note to the user.
+        print("Please upload Top50SpotifySongs2019.csv")
         # Upload the songs
         self.uploadCSV('TOP50')
+        print("Please upload Top50SpotifyArtists2019.csv")
         # Upload the artists
         self.uploadCSV('TOP50ARTISTS')
 
