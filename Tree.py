@@ -1,14 +1,16 @@
-from testCommands import *
 from keywords import *
 
 # Binary tree for constructing and executing query commands
 class Tree():
-    def __init__(self, data):
+    def __init__(self):
         # Tree is initialized with some data. 
         # Right and left children are initialized to None 
-        self.data = data
+        self.data = ""
         self.rc = None
         self.lc = None
+        virtualServer = SQLBackEnd('server.mdf')
+        virtualServer.uploadCSV('TOP50')
+        virtualServer.uploadCSV('TOP50ARTISTS')
 
     def setLeftChild(self, lc):
         # Adds a left child. lc can either be another tree or data.
@@ -27,6 +29,9 @@ class Tree():
     def isLeaf(self):
         # Checks if this Tree has any children
         return self.rc is None and self.lc is None
+
+    def setQuery(self, query):
+        self.data = query
 
     def evaluate(self):
         # Evaluates value of tree by carrying out operations and 
