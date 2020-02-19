@@ -202,10 +202,7 @@ class SQLBackEnd:
     # Effects:
 
     def uploadCSV(self, tableName, filename):
-        root = tk.Tk()
-        root.withdraw()
-        filePath = filename
-        songs = pd.read_csv(filePath)
+        songs = pd.read_csv(filename)
         # dtypes = {'ID': 'INTEGER', 'Track.Name': 'str', 'Artist.Name': 'str', 'Genre': 'str', 'Beats.Per.Minute': 'INTEGER', 'Energy': 'INTEGER', 'Danceability': 'INTEGER', 'Loudness': 'INTEGER', 'Liveness': 'INTEGER', 'Valence': 'INTEGER', 'Length': 'INTEGER', 'Acousticness': 'INTEGER', 'Speechiness': 'INTEGER', 'Popularity': 'INTEGER'}
         songs.to_sql(tableName, self.currentConnection, if_exists='append', index=False)
         self.currentConnection.commit()
