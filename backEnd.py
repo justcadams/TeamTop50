@@ -468,7 +468,7 @@ class SQLBackEnd:
     # Modifies:
     # Effects:
 
-    def getDanceability(self, objectName, tableName="TOP50"):
+    def getTempo(self, objectName, tableName="TOP50"):
         songName = self.findOjectByParameter(objectName, "song")
         sqlString = ""
         artistName = ""
@@ -478,24 +478,24 @@ class SQLBackEnd:
                 message = "We can not find an artist or song that matches your search query."
                 return message
             else:
-                sqlString = "SELECT danceability, artist FROM " + tableName + " WHERE artist ='" + artistName[0] + "'"
+                sqlString = "SELECT tempo, artist FROM " + tableName + " WHERE artist ='" + artistName[0] + "'"
         else:
-            sqlString = "SELECT danceability, song FROM " + tableName + " WHERE song ='" + songName[0] + "'"
+            sqlString = "SELECT tempo, song FROM " + tableName + " WHERE song ='" + songName[0] + "'"
         query = self.currentTerminal.execute(sqlString).fetchall()
         self.currentConnection.commit()
-        danceability = 0
+        tempo = 0
         if(isinstance(query,list) and len(query) > 1):
             sum = 0
             for val in query:
                 sum += val[0]
-            danceability = sum/len(query)
+            tempo = sum/len(query)
         else:
-            danceability = query[0]
+            tempo = query[0]
         if (self.debug):
             print(sqlString)
             print(query)
-            print(danceability)
-        return danceability
+            print(tempo)
+        return tempo
 
 
 
