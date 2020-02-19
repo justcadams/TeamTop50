@@ -2,7 +2,7 @@
 import os
 import sqlite3
 import warnings
-from difflib import SequenceMatcher
+from difflib import get_close_matches, SequenceMatcher
 import tkinter as tk
 import pandas as pd
 from tkinter import filedialog
@@ -24,13 +24,6 @@ class SQLBackEnd:
         self.connectToServer(filename)
         # Store the user's debug setting.
         self.debug = debug
-        # Note to the user.
-        print("Please upload Top50SpotifySongs2019.csv")
-        # Upload the songs
-        self.uploadCSV('TOP50')
-        print("Please upload Top50SpotifyArtists2019.csv")
-        # Upload the artists
-        self.uploadCSV('TOP50ARTISTS')
 
     # Requires: Nothing
     # Modifies: Nothing
@@ -318,57 +311,65 @@ class SQLBackEnd:
     # Modifies:
     # Effects:
 
-    def compareObjectsByParameter(self, firstObject, secondObject, parameter, tableName="TOP50"):
-        SQLString = "SELECT TrackName FROM " + tableName
-        query = self.currentTerminal.execute(SQLString).fetchall()
-        self.currentConnection.commit()
-        bestMatchFirstObjectTrackNameEntropy = SequenceMatcher(a=firstObject, b=query[0]).ratio()
-        bestMatchFirstObjectTrackNameValue = 0
-        bestMatchSecondObjectTrackNameEntropy = SequenceMatcher(a=secondObject, b=query[0]).ratio()
-        bestMatchSecondObjectTrackNameValue = 0
-        count = 0
-        for tuple in query:
-            if (SequenceMatcher(a=firstObject, b=tuple[0]).ratio() > bestMatchFirstObjectTrackNameEntropy):
-                bestMatchFirstObjectTrackNameEntropy = SequenceMatcher(a=firstObject, b=tuple[0]).ratio()
-                bestMatchFirstObjectTrackNameValue = count
-            if (SequenceMatcher(a=firstObject, b=tuple[0]).ratio() > bestMatchSecondObjectTrackNameEntropy):
-                bestMatchFirstObjectTrackNameEntropy = SequenceMatcher(a=secondObject, b=tuple[1]).ratio()
-                bestMatchSecondObjectTrackNameValue = count
-            count = count + 1
-        SQLString = "SELECT ArtistName FROM " + tableName
-        query = self.currentTerminal.execute(SQLString).fetchall()
-        self.currentConnection.commit()
-        bestMatchFirstObjectArtistNameEntropy = SequenceMatcher(a=firstObject, b=query[0]).ratio()
-        bestMatchFirstObjectArtistNameValue = 0
-        bestMatchSecondObjectArtistNameEntropy = SequenceMatcher(a=secondObject, b=query[0]).ratio()
-        bestMatchSecondObjectArtistNameValue = 0
-        count = 0
-        for tuple in query:
-            if (SequenceMatcher(a=firstObject, b=tuple[0]).ratio() > bestMatchFirstObjectArtistNameEntropy):
-                bestMatchFirstObjectArtistNameEntropy = SequenceMatcher(a=firstObject, b=tuple[0]).ratio()
-                bestMatchFirstObjectArtistNameValue = count
-            if (SequenceMatcher(a=firstObject, b=tuple[0]).ratio() > bestMatchSecondObjectArtistNameEntropy):
-                bestMatchSecondObjectArtistNameEntropy = SequenceMatcher(a=firstObject, b=tuple[1]).ratio()
-                bestMatchSecondObjectArtistNameValue = count
-            count = count + 1
-        objectEntropy = list(bestMatchFirstObjectTrackNameEntropy, bestMatchSecondObjectTrackNameEntropy,
-                             bestMatchFirstObjectArtistNameEntropy, bestMatchSecondObjectArtistNameEntropy)
-        bestEntropy = max(objectEntropy)
-        objectType = 0
-        returnValue = list()
-        for i in range(0, 3):
-            if (bestEntropy == objectEntropy[i]):
-                objectType = i
-        if (objectType < 2):
-            SQLString = "SELECT TrackName, " + parameter + " FROM " + tableName
-            query = self.currentTerminal.execute(SQLString).fetchall()
-            self.currentConnection.commit()
-            returnValue = list(query[bestMatchFirstObjectArtistNameValue], query[bestMatchSecondObjectArtistNameValue])
+    def compareObjectsByParameter(self, firstObject, secondObject, parameter):
+        sqlString = ""
+        firstObjectBestMatch = list()
+        secondObjectBestMatch = list()
+        if(parameter == 'birthplace' or parameter == 'birthday'):
+            sqlString = "SELECT artist FROM TOP50ARTISTS"
         else:
-            SQLString = "SELECT TrackName, " + parameter + " FROM " + tableName
-            query = self.currentTerminal.execute(SQLString).fetchall()
-            self.currentConnection.commit()
-            returnValue = list(query[bestMatchFirstObjectTrackNameValue], query[bestMatchSecondObjectTrackNameValue])
+            sqlString = "SELECT artist, track FROM TOP50"
+        query = self.currentTerminal.execute(sqlString).fetchall()
+        self.currentConnection.commit()
+        if(parameter == 'birthplace' or parameter == 'birthday'):
+            firstObjectBestMatch = get_close_matches(firstObject, query)
+            secondObjectBestMatch = get_close_matches(secondObject, query)
+            return firstObjectBestMatch, secondObjectBestMatch
+        else:
+            firstObjectArtistBestMatch = get_close_matches(firstObject, query[0])
+            firstObjectSongBestMatch = get_close_matches(firstObject, query[1])
+            secondObjectArtistBestMatch = get_close_matches(secondObject, query[0])
+            secondObjectSongBestMatch = get_close_matches(secondObject, query[1])
+            firstObjectArtistEntropy = SequenceMatcher(lambda x: x == " ",  firstObject, firstObjectArtistBestMatch)
+            firstObjectSongEntropy = SequenceMatcher(lambda x: x == " ",  firstObject, firstObjectSongBestMatch)
+            secondObjectArtistEntropy = SequenceMatcher(lambda x: x == " ",  secondObject, secondObjectArtistBestMatch)
+            secondObjectSongEntropy = SequenceMatcher(lambda x: x == " ", secondObject, secondObjectSongBestMatch)
+            if(firstObjectArtistEntropy > firstObjectSongEntropy and secondObjectArtistEntropy > secondObjectSongEntropy):
+                return firstObjectArtistBestMatch, secondObjectArtistBestMatch
+            elif(firstObjectArtistEntropy > firstObjectSongEntropy and secondObjectArtistEntropy < secondObjectSongEntropy):
+                return firstObjectArtistBestMatch, secondObjectSongBestMatch
+            elif(firstObjectArtistEntropy < firstObjectSongEntropy and secondObjectArtistEntropy > secondObjectSongEntropy):
+                return firstObjectSongEntropy, secondObjectArtistEntropy
+        return firstObjectSongEntropy, secondObjectSongEntropy
+
+
+    # Requires:
+    # Modifies:
+    # Effects:
+
+    def findOjectByParameter(self, firstObject, parameter):
+        sqlString = ""
+        if(parameter == 'birthplace' or parameter == 'birthday'):
+            sqlString = "SELECT " + parameter + " FROM TOP50ARTISTS"
+        else:
+            sqlString = "SELECT " + parameter + " FROM TOP50"
+        query = self.currentTerminal.execute(sqlString).fetchall()
+        self.currentConnection.commit()
+        bestMatchEntropy = SequenceMatcher(lambda x: x, a=firstObject, b=query[0])
+        location = 0
+        count = 0
+        print(query)
+        for val in query:
+            if (SequenceMatcher(lambda x: x, a=firstObject, b=val) > bestMatchEntropy):
+                bestMatchEntropy = SequenceMatcher(lambda x: x, a=firstObject, b=val)
+                location = count
+            count = count + 1
+        returnValue = ""
+        if(query == list()):
+            print("We did not find anything that closes matches your search.")
+            return returnValue
+        else:
+            returnValue = query[count]
         return returnValue
 
     # Requires:
@@ -376,7 +377,8 @@ class SQLBackEnd:
     # Effects:
 
     def getSongsbyArtist(self, artistName, tableName="TOP50"):
-        SQLString = "SELECT TrackName, ArtistName FROM " + tableName + " WHERE ArtistName ='" + artistName + "'"
+        artistName = self.findOjectByParameter(artistName, "artist")
+        SQLString = "SELECT song, artist FROM " + tableName + " WHERE artist ='" + artistName + "'"
         query = self.currentTerminal.execute(SQLString).fetchall()
         self.currentConnection.commit()
         songList = list()
@@ -387,6 +389,22 @@ class SQLBackEnd:
             print(query)
             print(songList)
         return songList
+
+
+    # Requires:
+    # Modifies:
+    # Effects:
+
+    def getSongbyArtist(self, artistName, tableName="TOP50"):
+        SQLString = "SELECT TrackName, ArtistName FROM " + tableName + " WHERE ArtistName ='" + artistName + "'"
+        query = self.currentTerminal.execute(SQLString).fetchall()
+        self.currentConnection.commit()
+        song = query[0]
+        if (self.debug):
+            print(SQLString)
+            print(query)
+            print(song)
+        return song
 
     # Requires:
     # Modifies:

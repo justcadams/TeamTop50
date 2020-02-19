@@ -3,8 +3,10 @@ UNARY_KEYWORDS = ["songs", "artist", "popularity",
                   "tempo", "energy", "loudness",
                   "liveliness", "valence", "acousticness",
                   "speechiness", "birthplace", "birthday"]
+
 BINARY_KEYWORDS = ["more popular", "more danceable",
                    "longer", "faster", "slower"]
+
 POLY_KEYWORDS = ["longest song", "slowest song", "fastest song",
                  "most danceable", "most popular"]
 
@@ -24,7 +26,7 @@ WORD_HELP = {"songs": "Gets a list of songs by an artist.",
              "acousticness": "Gets the acoustic value of a song.",
              "speechiness": "Gets the amount of speech in a song.",
              "birthplace": "Gets the birthplace of an artist.",
-             "birthday": "Gets the birthday of an artist",
+             "birthday": "Gets the birthday of an artist.",
              "more popular": "Gets the more popular of two songs (separated by keyword 'and'.)",
              "more danceable": "Gets the more danceable of two songs (separated by keyword 'and'.)",
              "longer": "Gets the longer of two songs (separated by keyword 'and'.)",
@@ -57,8 +59,4 @@ HELP_WORDS_LIST= [["songs", "Gets a list of songs by an artist."],
 
 ]
 
-
-
 BUZZWORDS = ["of", "by", "get"]
-
- 
