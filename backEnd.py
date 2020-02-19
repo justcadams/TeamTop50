@@ -382,22 +382,6 @@ class SQLBackEnd:
             print(songList)
         return songList
 
-
-    # Requires:
-    # Modifies:
-    # Effects:
-
-    def getSongByArtist(self, artistName, tableName="TOP50"):
-        SQLString = "SELECT TrackName, ArtistName FROM " + tableName + " WHERE ArtistName ='" + artistName + "'"
-        query = self.currentTerminal.execute(SQLString).fetchall()
-        self.currentConnection.commit()
-        song = query[0]
-        if (self.debug):
-            print(SQLString)
-            print(query)
-            print(song)
-        return song
-
     # Requires:
     # Modifies:
     # Effects:
@@ -429,7 +413,7 @@ class SQLBackEnd:
             print(sqlString)
             print(query)
             print(popularity)
-        return popularity
+        return popularity[0]
 
     # Requires:
     # Modifies:
@@ -462,7 +446,7 @@ class SQLBackEnd:
             print(sqlString)
             print(query)
             print(danceability)
-        return danceability
+        return danceability[0]
 
     # Requires:
     # Modifies:
@@ -495,7 +479,61 @@ class SQLBackEnd:
             print(sqlString)
             print(query)
             print(tempo)
-        return tempo
+        return tempo[0]
+
+    # Requires:
+    # Modifies:
+    # Effects:
+
+    def getLength(self, objectName, tableName="TOP50"):
+        songName = self.findOjectByParameter(objectName, "song")
+        sqlString = ""
+        artistName = ""
+        if(songName == None):
+            artistName = self.findOjectByParameter(objectName, "artist")
+            if(artistName == None):
+                message = "We can not find an artist or song that matches your search query."
+                return message
+            else:
+                sqlString = "SELECT length, artist FROM " + tableName + " WHERE artist ='" + artistName[0] + "'"
+        else:
+            sqlString = "SELECT length, song FROM " + tableName + " WHERE song ='" + songName[0] + "'"
+        query = self.currentTerminal.execute(sqlString).fetchall()
+        self.currentConnection.commit()
+        length = 0
+        if(isinstance(query,list) and len(query) > 1):
+            sum = 0
+            for val in query:
+                sum += val[0]
+            length = sum/len(query)
+        else:
+            length = query[0]
+        if (self.debug):
+            print(sqlString)
+            print(query)
+            print(length)
+        return length[0]
+
+    # Requires:
+    # Modifies:
+    # Effects:
+
+    def getSongGenre(self, songName, tableName="TOP50"):
+        songName = self.findOjectByParameter(songName, "song")
+        sqlString = ""
+        if(songName == None):
+            message = "We can not find an artist or song that matches your search query."
+            return message
+        else:
+            sqlString = "SELECT genre, song FROM " + tableName + " WHERE song ='" + songName[0] + "'"
+        query = self.currentTerminal.execute(sqlString).fetchall()
+        self.currentConnection.commit()
+        genre = query[0]
+        if (self.debug):
+            print(sqlString)
+            print(query)
+            print(genre)
+        return genre[0]
 
     # Requires:
     # Modifies:
@@ -577,8 +615,8 @@ class SQLBackEnd:
         virtualServer.getPopularityByArtist('Marshmello')
         virtualServer.getDanceabilityBySong('Happier')
         virtualServer.getDanceabilityByArtist('Marshmello')
-        virtualServer.getLengthBySong('Happier')
-        virtualServer.getLengthByArtist('Marshmello')
+        virtualServer.getLength('Happier')
+        virtualServer.getLength('Marshmello')
 
 # Justin's workspace
 

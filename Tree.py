@@ -38,7 +38,7 @@ class Tree:
         else:
             # UNARY COMMANDS
             if self.data == "songs":
-                return testCommands.virtualServer.getSongsByArtist(self.rc.evaluate)
+                return ', '.join(testCommands.virtualServer.getSongsByArtist(self.rc.evaluate))
             elif self.data == "artist":
                 return testCommands.virtualServer.getArtistBySong(self.rc.evaluate)
             elif self.data == "length":
@@ -67,6 +67,68 @@ class Tree:
                 return testCommands.virtualServer.getBirthplace(self.rc.evaluate)
             elif self.data == "birthday":
                 return testCommands.virtualServer.getBirthday(self.rc.evaluate)
+
+            # BINARY COMMANDS
+            elif self.data == "more popular":
+                song1 = self.rc.evaluate
+                song2 = self.rc.evaluate
+
+                q1 = testCommands.virtualServer.getPopularity(song1)
+                q2 = testCommands.virtualServer.getPopularity(song2)
+                if q1 > q2:
+                    return song1
+                else:
+                    return song2
+            elif self.data == "more danceable":
+                song1 = self.rc.evaluate
+                song2 = self.rc.evaluate
+
+                dance1 = testCommands.virtualServer.getDanceability(song1)
+                dance2 = testCommands.virtualServer.getDanceability(song2)
+                if q1 > q2:
+                    return song1
+                else:
+                    return song2
+            elif self.data == "longer":
+                song1 = self.rc.evaluate
+                song2 = self.rc.evaluate
+
+                q1 = testCommands.virtualServer.getLength(song1)
+                q2 = testCommands.virtualServer.getLength(song2)
+                if q1 > q2:
+                    return song1
+                else:
+                    return song2
+            elif self.data == "shorter":
+                song1 = self.rc.evaluate
+                song2 = self.rc.evaluate
+
+                q1 = testCommands.virtualServer.getLength(song1)
+                q2 = testCommands.virtualServer.getLength(song2)
+                if q1 < q2:
+                    return song1
+                else:
+                    return song2
+            elif self.data == "faster":
+                song1 = self.rc.evaluate
+                song2 = self.rc.evaluate
+
+                q1 = testCommands.virtualServer.getTempo(song1)
+                q2 = testCommands.virtualServer.getTempo(song2)
+                if q1 > q2:
+                    return song1
+                else:
+                    return song2
+            elif self.data == "slower":
+                song1 = self.rc.evaluate
+                song2 = self.rc.evaluate
+
+                q1 = testCommands.virtualServer.getTempo(song1)
+                q2 = testCommands.virtualServer.getTempo(song2)
+                if q1 < q2:
+                    return song1
+                else:
+                    return song2
             else:
                 return "ERROR"
 
