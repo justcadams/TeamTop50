@@ -38,7 +38,7 @@ class Tree:
         else:
             # UNARY COMMANDS
             if self.data == "songs":
-                return testCommands.virtualServer.getSongsByArtist(self.rc.evaluate)
+                return ', '.join(testCommands.virtualServer.getSongsByArtist(self.rc.evaluate))
             elif self.data == "artist":
                 return testCommands.virtualServer.getArtistBySong(self.rc.evaluate)
             elif self.data == "length":
