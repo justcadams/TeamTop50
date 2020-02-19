@@ -1,4 +1,6 @@
 # Binary tree for constructing and executing query commands
+import keywords
+import testCommands
 class Tree:
     def __init__(self, data):
         # Tree is initialized with some data.
@@ -27,8 +29,6 @@ class Tree:
 
     @property
     def evaluate(self):
-        import keywords
-        import testCommands
         # Evaluates value of tree by carrying out operations and
         # doing database queries; this is where backend should connect
         if self.isLeaf():
@@ -36,18 +36,38 @@ class Tree:
         elif self.data not in keywords.KEYWORDS:
             return "ERROR: Invalid command."
         else:
+
+            # UNARY COMMANDS
             if self.data == "songs":
-                return testCommands.virtualServer.getSongsByArtist(self.rc.evaluate)
-            if self.data == "artist":
-                return testCommands.virtualServer.getArtistBySong(self.rc.evaluate)
+                return testCommands.virtualServer.getSongsByArtist(self.rc.evaluate)[0]
+            elif self.data == "artist":
+                return testCommands.virtualServer.getArtistBySong(self.rc.evaluate)[0]
             elif self.data == "length":
-                return testCommands.virtualServer.getSongLength(self.rc.evaluate)
+                return testCommands.virtualServer.getLength(self.rc.evaluate)[0]
             elif self.data == "tempo":
-                return testCommands.virtualServer.getSongTempo(self.rc.evaluate)
+                return testCommands.virtualServer.getTempo(self.rc.evaluate)[0]
             elif self.data == "popularity":
-                return testCommands.virtualServer.getPopularity(self.rc.evaluate)
+                return testCommands.virtualServer.getPopularity(self.rc.evaluate)[0]
             elif self.data == "danceability":
-                return testCommands.virtualServer.getDanceability(self.rc.evaluate)
+                return testCommands.virtualServer.getDanceability(self.rc.evaluate)[0]
+            elif self.data == "genre":
+                return testCommands.virtualServer.getSongGenre(self.rc.evaluate)[0]
+            elif self.data == "energy":
+                return testCommands.virtualServer.getEnergy(self.rc.evaluate)[0]
+            elif self.data == "loudness":
+                return testCommands.virtualServer.getLoudness(self.rc.evaluate)[0]
+            elif self.data == "liveliness":
+                return testCommands.virtualServer.getLiveliness(self.rc.evaluate)[0]
+            elif self.data == "valence":
+                return testCommands.virtualServer.getValence(self.rc.evaluate)[0]
+            elif self.data == "acousticness":
+                return testCommands.virtualServer.getAccousticness(self.rc.evaluate)[0]
+            elif self.data == "speechiness":
+                return testCommands.virtualServer.getSpeechiness(self.rc.evaluate)[0]
+            elif self.data == "birthplace":
+                return testCommands.virtualServer.getBirthplace(self.rc.evaluate)[0]
+            elif self.data == "birthday":
+                return testCommands.virtualServer.getBirthday(self.rc.evaluate)[0]
             else:
                 return "ERROR"
 
