@@ -1,39 +1,72 @@
 import os.path
 from os import path
-from flask import Flask
-from flask import Blueprint, render_template, request
-from parserA import *
+import parserA as parserA
+import Tree
 from keywords import *
 from backEnd import SQLBackEnd
 import testCommands
 from testCommands import SQLBackEnd
-
-if(path.exists("./server.mdf")):
-    os.remove("./server.mdf")
-testCommands.virtualServer = SQLBackEnd('server.mdf')
-print('Please upload Top50SpotifySongs.csv')
-testCommands.virtualServer.uploadCSV('TOP50')
-print('Please upload Top50SpotifyArtists.csv')
-testCommands.virtualServer.uploadCSV('TOP50ARTISTS')
+from flask import Flask
+from flask import Blueprint, render_template, request
+import threading
 
 
-
+global app
 app = Flask(__name__)
-main = Blueprint("main", __name__)
+
+
+
+
+
+
 
 @app.route('/', methods=['POST', 'GET'])
 def index():
-
-
     errors = []
-    data = []
+    data = ["Empty"]
+    runaround = 0
+
+
+    # if (path.exists("./server.mdf")):
+    #     os.remove("./
+    if runaround == 0:
+        testCommands.virtualServer = SQLBackEnd('server.mdf')
+        print('Please upload Top50SpotifySongs.csv')
+        testCommands.virtualServer.uploadCSV('TOP50', './Top50SpotifySongs2019.csv')
+        print('Please upload Top50SpotifyArtists.csv')
+        testCommands.virtualServer.uploadCSV('TOP50ARTISTS', './Top50SpotifyArtists2019.csv')
+        runaround += 1
 
     if request.method == "POST":
         try:
             queryfromPOST = request.form['submission']
-            commandTree = parse(queryfromPOST)
-            output = commandTree.evaluate()
-            data.append(output)
+            errors.append(queryfromPOST)
+            errors.append(type(queryfromPOST))
+            tree = parserA.parse(queryfromPOST)
+            errors.append(str(tree))
+            errors.append(type(tree))
+
+            try:
+                errors.append(tree.evaluate())
+                output = tree.evaluate()
+
+            except:
+                errors.append("Broken Output Function")
+                errors.append(str(output))
+                pass
+
+            try:
+                data.append(output)
+            except:
+                errors.append("Cannot Append Output when Broken")
+                return render_template("index.html", helpWords=HELP_WORDS_LIST, query=errors)
+
+            #return render_template("index.html", helpWords=HELP_WORDS_LIST, query="In Parsing Thread")
+
+            # t1 = threading.Thread(target=parsingThread, args=queryfromPOST)
+            # t1.start()
+            # t1.join()
+
 
             go = True
             loaded = True
@@ -62,7 +95,9 @@ def index():
 
         except:
             errors.append("Unable to process your request.")
+            return render_template("index.html", helpWords=HELP_WORDS_LIST, query=errors)
     return render_template("index.html", helpWords=HELP_WORDS_LIST)
+
 
 
 
