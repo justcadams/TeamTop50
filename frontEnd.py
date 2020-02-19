@@ -10,7 +10,6 @@ if __name__ == "__main__":
     print("Enter command or type 'help'")
     while go:
         query = input("> ")
-
         if query == "help":
             print("Available commands: ")
             for word in KEYWORDS:
