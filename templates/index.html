@@ -1,0 +1,99 @@
+<!-- This is for the help words table -->
+<style>
+    tbody tr.HelpWordsChild:nth-child(even){
+        background-color: cornflowerblue;
+
+    }
+
+    tbody tr td {
+        font-size: 1.25em;
+    }
+</style>
+
+<body style="margin: 2em; background-color: azure;">
+
+
+<div style="display:block; float: right;">
+    <table style="border-collapse: collapse;">
+        <tbody>
+        <th style="font-size: 1.5em; font-weight: bold">Helpful KeyWords</th>
+        {% for item in helpWords %}
+            <tr class="HelpWordsChild">
+                <td>{{ item[0] }}</td>
+
+                <td>{{ item[1] }}</td>
+            </tr>
+        {% endfor %}
+        </tbody>
+    </table>
+
+    <table style="margin-top: 2em; border-collapse: collapse;">
+        <tbody>
+            <th>Glue Words</th>
+            <tr>
+                <td>of</td>
+                <td>Placed between two of the helpful keywords</td>
+            </tr>
+            <tr>
+                <td>by</td>
+                <td>When looking for songs by an artist</td>
+            </tr>
+            <tr>
+                <td>get</td>
+                <td>usually typed at the beginning of a query</td>
+            </tr>
+            <tr>
+                <td>and</td>
+                <td>Used to compare two or more items together</td>
+            </tr>
+        </tbody>
+
+    </table>
+</div>
+
+<h1>Welcome to the Team Top 50 Query Box</h1>
+<p>Please take a look at out query structure and follow</p>
+<p>Don't worry, we are pretty forgiving if you make a typo</p>
+<p>Ex. popularity of 'Shawn Mendes'</p>
+<p>Ex. danceability of 'Shape of You'</p>
+
+
+
+<form role="form" method='POST' action='/'>
+    <input type="text" name="submission" class="submitButton" id="query-text" placeholder="Enter Query..." style="max-width: 25%;" autofocus required>
+    <button type="submit" class="btn btn-default">Submit</button>
+</form>
+
+
+
+
+
+<!-- This is for -->
+
+
+
+
+<div class="container">
+    <h3>{{ query }}</h3>
+    {% for item in data %}
+        <h3>{{ item }}</h3>
+    {% endfor %}
+
+</div>
+
+<div class="photos-container">
+    <div class="team-pic">
+        <img src="static/placeholder.png">
+    </div>
+        <div class="team-pic">
+        <img src="static/placeholder.png">
+    </div>
+        <div class="team-pic">
+        <img src="static/placeholder.png">
+    </div>
+        <div class="team-pic">
+        <img src="static/placeholder.png">
+    </div>
+</div>
+
+</body>

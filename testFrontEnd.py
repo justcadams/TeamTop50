@@ -1,5 +1,5 @@
 from Tree import *
-from parser import *
+from parserA import *
 
 def testTree():
     tree1 = Tree("testing")
