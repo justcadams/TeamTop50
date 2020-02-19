@@ -3,8 +3,14 @@ from flask import Blueprint, render_template, request
 from parserA import *
 from keywords import *
 from backEnd import SQLBackEnd
+import testCommands
+from testCommands import SQLBackEnd
 
-
+testCommands.virtualServer = SQLBackEnd('server.mdf')
+print('Please upload Top50SpotifySongs.csv')
+testCommands.virtualServer.uploadCSV('TOP50')
+print('Please upload Top50SpotifyArtists.csv')
+testCommands.virtualServer.uploadCSV('TOP50ARTISTS')
 
 
 
@@ -13,6 +19,8 @@ main = Blueprint("main", __name__)
 
 @app.route('/', methods=['POST', 'GET'])
 def index():
+
+
     errors = []
     data = []
 
