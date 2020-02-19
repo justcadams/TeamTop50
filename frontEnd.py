@@ -9,9 +9,9 @@ if __name__ == "__main__":
         os.remove("./server.mdf")
     testCommands.virtualServer = SQLBackEnd('server.mdf')
     print('Please upload Top50SpotifySongs.csv')
-    testCommands.virtualServer.uploadCSV('TOP50')
+    testCommands.virtualServer.uploadCSV('TOP50', './Top50SpotifySongs2019.csv')
     print('Please upload Top50SpotifyArtists.csv')
-    testCommands.virtualServer.uploadCSV('TOP50ARTISTS')
+    testCommands.virtualServer.uploadCSV('TOP50ARTISTS', './Top50SpotifyArtists2019.csv')
     go = True
     loaded = True
     print("Enter command or type 'help'")
@@ -29,6 +29,7 @@ if __name__ == "__main__":
             if not loaded:
                 print("Need to load .csv file by typing 'load' first.")
             else:
+                print(query)
                 tree = parserA.parse(query)
                 output = tree.evaluate
                 print(output)

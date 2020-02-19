@@ -201,10 +201,10 @@ class SQLBackEnd:
     # Modifies:
     # Effects:
 
-    def uploadCSV(self, tableName):
+    def uploadCSV(self, tableName, filename):
         root = tk.Tk()
         root.withdraw()
-        filePath = filedialog.askopenfilename()
+        filePath = filename
         songs = pd.read_csv(filePath)
         # dtypes = {'ID': 'INTEGER', 'Track.Name': 'str', 'Artist.Name': 'str', 'Genre': 'str', 'Beats.Per.Minute': 'INTEGER', 'Energy': 'INTEGER', 'Danceability': 'INTEGER', 'Loudness': 'INTEGER', 'Liveness': 'INTEGER', 'Valence': 'INTEGER', 'Length': 'INTEGER', 'Acousticness': 'INTEGER', 'Speechiness': 'INTEGER', 'Popularity': 'INTEGER'}
         songs.to_sql(tableName, self.currentConnection, if_exists='append', index=False)
@@ -390,7 +390,7 @@ class SQLBackEnd:
     # Modifies:
     # Effects:
 
-    def getSongbyArtist(self, artistName, tableName="TOP50"):
+    def getSongByArtist(self, artistName, tableName="TOP50"):
         SQLString = "SELECT TrackName, ArtistName FROM " + tableName + " WHERE ArtistName ='" + artistName + "'"
         query = self.currentTerminal.execute(SQLString).fetchall()
         self.currentConnection.commit()
@@ -434,7 +434,6 @@ class SQLBackEnd:
             print(popularity)
         return popularity
 
-
     # Requires:
     # Modifies:
     # Effects:
@@ -472,6 +471,41 @@ class SQLBackEnd:
     # Modifies:
     # Effects:
 
+    def getDanceability(self, objectName, tableName="TOP50"):
+        songName = self.findOjectByParameter(objectName, "song")
+        sqlString = ""
+        artistName = ""
+        if(songName == None):
+            artistName = self.findOjectByParameter(objectName, "artist")
+            if(artistName == None):
+                message = "We can not find an artist or song that matches your search query."
+                return message
+            else:
+                sqlString = "SELECT danceability, artist FROM " + tableName + " WHERE artist ='" + artistName[0] + "'"
+        else:
+            sqlString = "SELECT danceability, song FROM " + tableName + " WHERE song ='" + songName[0] + "'"
+        query = self.currentTerminal.execute(sqlString).fetchall()
+        self.currentConnection.commit()
+        danceability = 0
+        if(isinstance(query,list) and len(query) > 1):
+            sum = 0
+            for val in query:
+                sum += val[0]
+            danceability = sum/len(query)
+        else:
+            danceability = query[0]
+        if (self.debug):
+            print(sqlString)
+            print(query)
+            print(danceability)
+        return danceability
+
+
+
+    # Requires:
+    # Modifies:
+    # Effects:
+
     def getArtistBySong(self, songName, tableName="TOP50"):
         SQLString = "SELECT ArtistName, TrackName FROM " + tableName + " WHERE TrackName = '" + songName + "'"
         query = self.currentTerminal.execute(SQLString).fetchall()
@@ -482,128 +516,6 @@ class SQLBackEnd:
             print(query)
             print(artistName)
         return artistName
-
-    # Requires:
-    # Modifies:
-    # Effects:
-
-    def getSongPopularity(self, songName, tableName = "TOP50"):
-        songName = self.findOjectByParameter(songName, "song")
-        if(isinstance(songName, list)):
-            sqlString = "SELECT popularity, song FROM " + tableName + " WHERE song ='" + songName[0] + "'"
-        else:
-            sqlString = "SELECT popularity, song FROM " + tableName + " WHERE song ='" + songName + "'"
-        query = self.currentTerminal.execute(sqlString).fetchall()
-        self.currentConnection.commit()
-        songPopularity = query
-        if(self.debug):
-            print(sqlString)
-            print(query)
-            print(songPopularity)
-        return songPopularity
-
-    # Requires:
-    # Modifies:
-    # Effects:
-
-    def getSongTempo(self, songName, tableName = "TOP50"):
-        songName = self.findOjectByParameter(songName, "tempo")
-        if(isinstance(songName, list)):
-            sqlString = "SELECT tempo, song FROM " + tableName + " WHERE song ='" + songName[0] + "'"
-        else:
-            sqlString = "SELECT tempo, song FROM " + tableName + " WHERE song ='" + songName + "'"
-        query = self.currentTerminal.execute(sqlString).fetchall()
-        self.currentConnection.commit()
-        songTempo = query
-        if(self.debug):
-            print(sqlString)
-            print(query)
-            print(songTempo)
-        return songTempo
-
-    # Requires:
-    # Modifies:
-    # Effects:
-
-    def getSongLength(self, songName, tableName = "TOP50"):
-        SQLString = "SELECT length, song FROM " + tableName + " WHERE song = '" + songName + "'"
-        query = self.currentTerminal.execute(SQLString).fetchall()
-        self.currentConnection.commit()
-        songLength = query[0]
-        if (self.debug):
-            print(SQLString)
-            print(query)
-            print(songLength)
-        return songLength
-
-    # Requires:
-    # Modifies:
-    # Effects:
-
-    def getDanceabilityBySong(self, songName, tableName="TOP50"):
-        SQLString = "SELECT Danceability, TrackName FROM " + tableName + " WHERE TrackName = '" + songName + "'"
-        query = self.currentTerminal.execute(SQLString).fetchall()
-        self.currentConnection.commit()
-        danceability = query[0]
-        if (self.debug):
-            print(SQLString)
-            print(query)
-            print(danceability)
-        return danceability
-
-    # Requires:
-    # Modifies:
-    # Effects:
-
-    def getDanceabilityByArtist(self, artistName, tableName="TOP50"):
-        SQLString = "SELECT Danceability, ArtistName FROM " + tableName + " WHERE ArtistName = '" + artistName + "'"
-        query = self.currentTerminal.execute(SQLString).fetchall()
-        self.currentConnection.commit()
-        summation = 0
-        for val in query:
-            summation = val[0] + summation
-        average = summation / len(query)
-        if (self.debug):
-            print(SQLString)
-            print(query)
-            print(average)
-        return average
-
-    # Requires:
-    # Modifies:
-    # Effects:
-
-    def getTempoByArtist(self, artistName, tableName="TOP50"):
-        SQLString = "SELECT tempo, ArtistName FROM " + tableName + " WHERE ArtistName ='" + artistName + "'"
-        query = self.currentTerminal.execute(SQLString).fetchall()
-        self.currentConnection.commit()
-        summation = 0
-        for val in query:
-            summation = val[0] + summation
-        average = summation / len(query[0])
-        if (self.debug):
-            print(SQLString)
-            print(query)
-            print(average)
-        return average
-
-    # Requires:
-    # Modifies:
-    # Effects:
-
-    def getLengthByArtist(self, artistName, tableName="TOP50"):
-        SQLString = "SELECT Length, ArtistName FROM " + tableName + " WHERE ArtistName ='" + artistName + "'"
-        query = self.currentTerminal.execute(SQLString).fetchall()
-        self.currentConnection.commit()
-        summation = 0
-        for val in query:
-            summation = val[0] + summation
-        average = summation / len(query[0])
-        if (self.debug):
-            print(SQLString)
-            print(query)
-            print(average)
-        return average
 
     # Requires:
     # Modifies:
