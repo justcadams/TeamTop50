@@ -521,7 +521,7 @@ class SQLBackEnd:
             print(sqlString)
             print(query)
             print(artistName)
-        return artistName
+        return artistName[0][0]
 
     # Requires:
     # Modifies:
