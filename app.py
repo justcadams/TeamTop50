@@ -1,3 +1,5 @@
+import os.path
+from os import path
 from flask import Flask
 from flask import Blueprint, render_template, request
 from parserA import *
@@ -6,6 +8,8 @@ from backEnd import SQLBackEnd
 import testCommands
 from testCommands import SQLBackEnd
 
+if(path.exists("./server.mdf")):
+    os.remove("./server.mdf")
 testCommands.virtualServer = SQLBackEnd('server.mdf')
 print('Please upload Top50SpotifySongs.csv')
 testCommands.virtualServer.uploadCSV('TOP50')
