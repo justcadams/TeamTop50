@@ -330,10 +330,10 @@ class SQLBackEnd:
             firstObjectSongBestMatch = get_close_matches(firstObject, query[1])
             secondObjectArtistBestMatch = get_close_matches(secondObject, query[0])
             secondObjectSongBestMatch = get_close_matches(secondObject, query[1])
-            firstObjectArtistEntropy = SequenceMatcher(lambda x: x == " ",  firstObject, firstObjectArtistBestMatch)
-            firstObjectSongEntropy = SequenceMatcher(lambda x: x == " ",  firstObject, firstObjectSongBestMatch)
-            secondObjectArtistEntropy = SequenceMatcher(lambda x: x == " ",  secondObject, secondObjectArtistBestMatch)
-            secondObjectSongEntropy = SequenceMatcher(lambda x: x == " ", secondObject, secondObjectSongBestMatch)
+            firstObjectArtistEntropy = SequenceMatcher(lambda x: x == " ",  firstObject, firstObjectArtistBestMatch).ratio()
+            firstObjectSongEntropy = SequenceMatcher(lambda x: x == " ",  firstObject, firstObjectSongBestMatch).ratio()
+            secondObjectArtistEntropy = SequenceMatcher(lambda x: x == " ",  secondObject, secondObjectArtistBestMatch).ratio()
+            secondObjectSongEntropy = SequenceMatcher(lambda x: x == " ", secondObject, secondObjectSongBestMatch).ratio()
             if(firstObjectArtistEntropy > firstObjectSongEntropy and secondObjectArtistEntropy > secondObjectSongEntropy):
                 return firstObjectArtistBestMatch, secondObjectArtistBestMatch
             elif(firstObjectArtistEntropy > firstObjectSongEntropy and secondObjectArtistEntropy < secondObjectSongEntropy):
@@ -355,13 +355,13 @@ class SQLBackEnd:
             sqlString = "SELECT " + parameter + " FROM TOP50"
         query = self.currentTerminal.execute(sqlString).fetchall()
         self.currentConnection.commit()
-        bestMatchEntropy = SequenceMatcher(lambda x: x, a=firstObject, b=query[0])
+        bestMatchEntropy = SequenceMatcher(lambda x: x, a=firstObject, b=query[0]).ratio()
         location = 0
         count = 0
         print(query)
         for val in query:
-            if (SequenceMatcher(lambda x: x, a=firstObject, b=val) > bestMatchEntropy):
-                bestMatchEntropy = SequenceMatcher(lambda x: x, a=firstObject, b=val)
+            if (SequenceMatcher(lambda x: x, a=firstObject, b=val).ratio() > bestMatchEntropy):
+                bestMatchEntropy = SequenceMatcher(lambda x: x, a=firstObject, b=val).ratio()
                 location = count
             count = count + 1
         returnValue = ""
