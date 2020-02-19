@@ -418,18 +418,18 @@ class SQLBackEnd:
         query = self.currentTerminal.execute(sqlString).fetchall()
         self.currentConnection.commit()
         popularity = 0
-        if(isinstance(query,list) and len(query) > 1):
+        if(isinstance(query,list) and len(query) == 1):
             sum = 0
             for val in query:
                 sum += val[0]
             popularity = sum/len(query)
         else:
-            popularity = query
+            popularity = query[0]
         if (self.debug):
             print(sqlString)
             print(query)
             print(popularity)
-        return popularity[0][0]
+        return popularity
 
     # Requires:
     # Modifies:
