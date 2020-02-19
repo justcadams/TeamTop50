@@ -8,6 +8,7 @@ if __name__ == "__main__":
     loaded = False
     tree = parse()
     print("Enter command or type 'help'")
+    virtualServer = SQLBackEnd('Top50.mdf')
     while go:
         query = input("> ")
         if query == "help":
@@ -25,5 +26,3 @@ if __name__ == "__main__":
                 tree = parse(query)
                 output = tree.evaluate()
                 print(output)
-
-def evaluate(tree):
