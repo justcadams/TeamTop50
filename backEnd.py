@@ -354,38 +354,33 @@ class SQLBackEnd:
         else:
             sqlString = "SELECT " + parameter + " FROM TOP50"
         query = self.currentTerminal.execute(sqlString).fetchall()
-        self.currentConnection.commit()
-        bestMatchEntropy = SequenceMatcher(lambda x: x, a=firstObject, b=query[0]).ratio()
-        location = 0
-        count = 0
-        print(query)
+        values = list()
         for val in query:
-            if (SequenceMatcher(lambda x: x, a=firstObject, b=val).ratio() > bestMatchEntropy):
-                bestMatchEntropy = SequenceMatcher(lambda x: x, a=firstObject, b=val).ratio()
-                location = count
-            count = count + 1
-        returnValue = ""
-        if(query == list()):
-            print("We did not find anything that closes matches your search.")
-            return returnValue
-        else:
-            returnValue = query[count]
-        return returnValue
+            values.append(val[0])
+        self.currentConnection.commit()
+        bestMatchEntropy = get_close_matches(firstObject, values, n=len(query), cutoff=0.6)
+        if(len(bestMatchEntropy) == 0):
+            return None
+        return bestMatchEntropy
 
     # Requires:
     # Modifies:
     # Effects:
 
-    def getSongsbyArtist(self, artistName, tableName="TOP50"):
+    def getSongsByArtist(self, artistName, tableName="TOP50"):
         artistName = self.findOjectByParameter(artistName, "artist")
-        SQLString = "SELECT song, artist FROM " + tableName + " WHERE artist ='" + artistName + "'"
-        query = self.currentTerminal.execute(SQLString).fetchall()
+        sqlString = ""
+        if(isinstance(artistName, list)):
+            sqlString = "SELECT song, artist FROM " + tableName + " WHERE artist ='" + artistName[0] + "'"
+        else:
+            sqlString = "SELECT song, artist FROM " + tableName + " WHERE artist ='" + artistName + "'"
+        query = self.currentTerminal.execute(sqlString).fetchall()
         self.currentConnection.commit()
         songList = list()
-        for val in query[0]:
+        for val in query:
             songList.append(val)
         if (self.debug):
-            print(SQLString)
+            print(sqlString)
             print(query)
             print(songList)
         return songList
@@ -410,16 +405,68 @@ class SQLBackEnd:
     # Modifies:
     # Effects:
 
-    def getPopularityBySong(self, songName, tableName="TOP50"):
-        SQLString = "SELECT Popularity, TrackName FROM " + tableName + " WHERE TrackName ='" + songName + "'"
-        query = self.currentTerminal.execute(SQLString).fetchall()
+    def getPopularity(self, objectName, tableName="TOP50"):
+        songName = self.findOjectByParameter(objectName, "song")
+        sqlString = ""
+        artistName = ""
+        if(songName == None):
+            artistName = self.findOjectByParameter(objectName, "artist")
+            if(artistName == None):
+                message = "We can not find an artist or song that matches your search query."
+                return message
+            else:
+                sqlString = "SELECT popularity, artist FROM " + tableName + " WHERE artist ='" + artistName[0] + "'"
+        else:
+            sqlString = "SELECT popularity, song FROM " + tableName + " WHERE song ='" + songName + "'"
+        query = self.currentTerminal.execute(sqlString).fetchall()
         self.currentConnection.commit()
-        popularity = query[0]
+        popularity = 0
+        if(isinstance(query) == list() and len(query) > 1):
+            sum = 0
+            for val in query:
+                sum += val[0]
+            popularity = sum/len(query)
+        else:
+            popularity = query[0]
         if (self.debug):
-            print(SQLString)
+            print(sqlString)
             print(query)
             print(popularity)
         return popularity
+
+
+    # Requires:
+    # Modifies:
+    # Effects:
+
+    def getDanceability(self, objectName, tableName="TOP50"):
+        songName = self.findOjectByParameter(objectName, "song")
+        sqlString = ""
+        artistName = ""
+        if(songName == None):
+            artistName = self.findOjectByParameter(objectName, "artist")
+            if(artistName == None):
+                message = "We can not find an artist or song that matches your search query."
+                return message
+            else:
+                sqlString = "SELECT danceability, artist FROM " + tableName + " WHERE artist ='" + artistName[0] + "'"
+        else:
+            sqlString = "SELECT danceability, song FROM " + tableName + " WHERE song ='" + songName[0] + "'"
+        query = self.currentTerminal.execute(sqlString).fetchall()
+        self.currentConnection.commit()
+        danceability = 0
+        if(isinstance(query,list) and len(query) > 1):
+            sum = 0
+            for val in query:
+                sum += val[0]
+            danceability = sum/len(query)
+        else:
+            danceability = query[0]
+        if (self.debug):
+            print(sqlString)
+            print(query)
+            print(danceability)
+        return danceability
 
     # Requires:
     # Modifies:
@@ -441,10 +488,14 @@ class SQLBackEnd:
     # Effects:
 
     def getSongPopularity(self, songName, tableName = "TOP50"):
-        sqlString = "SELECT tempo, song FROM " + tableName + " WHERE song = '" + songName + "'"
+        songName = self.findOjectByParameter(songName, "song")
+        if(isinstance(songName, list)):
+            sqlString = "SELECT popularity, song FROM " + tableName + " WHERE song ='" + songName[0] + "'"
+        else:
+            sqlString = "SELECT popularity, song FROM " + tableName + " WHERE song ='" + songName + "'"
         query = self.currentTerminal.execute(sqlString).fetchall()
         self.currentConnection.commit()
-        songPopularity = query[0]
+        songPopularity = query
         if(self.debug):
             print(sqlString)
             print(query)
@@ -456,10 +507,14 @@ class SQLBackEnd:
     # Effects:
 
     def getSongTempo(self, songName, tableName = "TOP50"):
-        sqlString = "SELECT tempo, song FROM " + tableName + " WHERE song = '" + songName + "'"
+        songName = self.findOjectByParameter(songName, "tempo")
+        if(isinstance(songName, list)):
+            sqlString = "SELECT tempo, song FROM " + tableName + " WHERE song ='" + songName[0] + "'"
+        else:
+            sqlString = "SELECT tempo, song FROM " + tableName + " WHERE song ='" + songName + "'"
         query = self.currentTerminal.execute(sqlString).fetchall()
         self.currentConnection.commit()
-        songTempo = query[0]
+        songTempo = query
         if(self.debug):
             print(sqlString)
             print(query)
@@ -599,7 +654,7 @@ class SQLBackEnd:
         virtualServer.uploadCSV('TOP50')
         virtualServer.uploadCSV('TOP50ARTISTS')
         virtualServer.selectAllFromTable('TOP50')
-        virtualServer.getSongsbyArtist('Marshmello')
+        virtualServer.getSongsByArtist('Marshmello')
         virtualServer.getPopularityBySong('Happier')
         virtualServer.getPopularityByArtist('Marshmello')
         virtualServer.getDanceabilityBySong('Happier')
