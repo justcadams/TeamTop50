@@ -37,15 +37,17 @@ class Tree:
             return "ERROR: Invalid command."
         else:
             if self.data == "songs":
-                return testCommands.virtualServer.getSongsbyArtist(self.rc.evaluate)
+                return testCommands.virtualServer.getSongsByArtist(self.rc.evaluate)
             if self.data == "artist":
-                return testCommands.virtualServer.getSongbyArtist(self.rc.evaluate)
+                return testCommands.virtualServer.getArtistBySong(self.rc.evaluate)
             elif self.data == "length":
                 return testCommands.virtualServer.getSongLength(self.rc.evaluate)
             elif self.data == "tempo":
                 return testCommands.virtualServer.getSongTempo(self.rc.evaluate)
             elif self.data == "popularity":
-                return testCommands.virtualServer.getSongPopularity(self.rc.evaluate)
+                return testCommands.virtualServer.getPopularity(self.rc.evaluate)
+            elif self.data == "danceability":
+                return testCommands.virtualServer.getDanceability(self.rc.evaluate)
             else:
                 return "ERROR"
 
