@@ -26,6 +26,10 @@ class SQLBackEnd:
 		self.connectToServer(filename)
 		# Store the user's debug setting.
 		self.debug = debug
+		# Upload the songs
+		self.uploadCSV('TOP50')
+		# Upload the artists
+		self.uploadCSV('TOP50ARTISTS')
 
 	# Requires: Nothing
 	# Modifies: Nothing

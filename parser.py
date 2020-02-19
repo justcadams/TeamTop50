@@ -17,7 +17,8 @@ def parse(query):
             words[i] = tmp
             del(words[i+1])
         i = i+1
-    return words
+    tree = buildTree(words)
+    return tree
 
 
 def buildTree(array):
