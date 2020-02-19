@@ -505,7 +505,7 @@ class SQLBackEnd:
         SQLString = "SELECT artist, song FROM " + tableName + " WHERE song = '" + songName + "'"
         query = self.currentTerminal.execute(SQLString).fetchall()
         self.currentConnection.commit()
-        artistName = query[0]
+        artistName = query
         if (self.debug):
             print(SQLString)
             print(query)
