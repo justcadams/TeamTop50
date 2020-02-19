@@ -375,7 +375,7 @@ class SQLBackEnd:
         self.currentConnection.commit()
         songList = list()
         for val in query:
-            songList.append(val)
+            songList.append(val[0])
         if (self.debug):
             print(sqlString)
             print(query)
