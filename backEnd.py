@@ -502,12 +502,23 @@ class SQLBackEnd:
     # Effects:
 
     def getArtistBySong(self, songName, tableName="TOP50"):
-        SQLString = "SELECT artist, song FROM " + tableName + " WHERE song = '" + songName + "'"
-        query = self.currentTerminal.execute(SQLString).fetchall()
+        songName = self.findOjectByParameter(songName, "song")
+        sqlString = ""
+        artistName = ""
+        if(songName == None):
+            artistName = self.findOjectByParameter(songName, "artist")
+            if(artistName == None):
+                message = "We can not find an artist or song that matches your search query."
+                return message
+            else:
+                sqlString = "SELECT artist, song FROM " + tableName + " WHERE artist ='" + artistName[0] + "'"
+        else:
+            sqlString = "SELECT artist, song FROM " + tableName + " WHERE song ='" + songName[0] + "'"
+        query = self.currentTerminal.execute(sqlString).fetchall()
         self.currentConnection.commit()
         artistName = query
         if (self.debug):
-            print(SQLString)
+            print(sqlString)
             print(query)
             print(artistName)
         return artistName
