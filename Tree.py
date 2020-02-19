@@ -36,9 +36,10 @@ class Tree:
         elif self.data not in keywords.KEYWORDS:
             return "ERROR: Invalid command."
         else:
-
             # UNARY COMMANDS
             if self.data == "songs":
+                return testCommands.virtualServer.getSongsByArtist(self.rc.evaluate)[0]
+            elif self.data == "song":
                 return testCommands.virtualServer.getSongsByArtist(self.rc.evaluate)[0]
             elif self.data == "artist":
                 return testCommands.virtualServer.getArtistBySong(self.rc.evaluate)[0]
