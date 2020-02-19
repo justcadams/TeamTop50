@@ -29,7 +29,6 @@ if __name__ == "__main__":
             if not loaded:
                 print("Need to load .csv file by typing 'load' first.")
             else:
-                print(query)
                 tree = parserA.parse(query)
                 output = tree.evaluate
                 print(output)

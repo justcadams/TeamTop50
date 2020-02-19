@@ -414,7 +414,7 @@ class SQLBackEnd:
             else:
                 sqlString = "SELECT popularity, artist FROM " + tableName + " WHERE artist ='" + artistName[0] + "'"
         else:
-            sqlString = "SELECT popularity, song FROM " + tableName + " WHERE song ='" + songName + "'"
+            sqlString = "SELECT popularity, song FROM " + tableName + " WHERE song ='" + songName[0] + "'"
         query = self.currentTerminal.execute(sqlString).fetchall()
         self.currentConnection.commit()
         popularity = 0
@@ -424,12 +424,12 @@ class SQLBackEnd:
                 sum += val[0]
             popularity = sum/len(query)
         else:
-            popularity = query[0]
+            popularity = query
         if (self.debug):
             print(sqlString)
             print(query)
             print(popularity)
-        return popularity
+        return popularity[0][0]
 
     # Requires:
     # Modifies:
