@@ -1,6 +1,7 @@
 # Binary tree for constructing and executing query commands
 import keywords
 import commands
+
 class Tree:
     def __init__(self, data):
         # Tree is initialized with some data.
@@ -37,101 +38,40 @@ class Tree:
         elif data not in keywords.KEYWORDS:
             return "ERROR: Invalid command."
         else:
-            # UNARY COMMANDS
-            if data == "songs":
-                return ', '.join(commands.virtualServer.getSongsByArtist(self.rc.evaluate))
-            elif data == "artist":
-                return commands.virtualServer.getArtistBySong(self.rc.evaluate)
-            elif data == "length":
-                return commands.virtualServer.getLength(self.rc.evaluate)
-            elif data == "tempo":
-                return commands.virtualServer.getTempo(self.rc.evaluate)
-            elif data == "popularity":
-                return commands.virtualServer.getPopularity(self.rc.evaluate)
-            elif data == "danceability":
-                return commands.virtualServer.getDanceability(self.rc.evaluate)
-            elif data == "genre":
-                return commands.virtualServer.getSongGenre(self.rc.evaluate)
-            elif data == "energy":
-                return commands.virtualServer.getEnergy(self.rc.evaluate)
-            elif data == "loudness":
-                return commands.virtualServer.getLoudness(self.rc.evaluate)
-            elif data == "liveliness":
-                return commands.virtualServer.getLiveliness(self.rc.evaluate)
-            elif data == "valence":
-                return commands.virtualServer.getValence(self.rc.evaluate)
-            elif data == "acousticness":
-                return commands.virtualServer.getAccousticness(self.rc.evaluate)
-            elif data == "speechiness":
-                return commands.virtualServer.getSpeechiness(self.rc.evaluate)
-            elif data == "birthplace":
-                return commands.virtualServer.getBirthplace(self.rc.evaluate)
-            elif data == "birthday":
-                return commands.virtualServer.getBirthday(self.rc.evaluate)
-
-            # BINARY COMMANDS
-            elif data == "more popular":
+            command = commands.commandMap()[data]
+            
+            # Unary command handling
+            if data in keywords.UNARY_KEYWORDS:
+                return command(self.rc.evaluate)
+            # Binary command handling
+            elif data in keywords.BINARY_KEYWORDS:
                 song1 = self.rc.evaluate
-                song2 = self.rc.evaluate
-
-                q1 = commands.virtualServer.getPopularity(song1)
-                q2 = commands.virtualServer.getPopularity(song2)
-                if q1 > q2:
-                    return song1
+                song2 = self.lc.evaluate
+                q1 = command(song1)
+                q2 = command(song2)
+                if data in keywords.GREATER_KEYWORDS:
+                    if q1 > q2:
+                        return song1
+                    else:
+                        return song2
                 else:
-                    return song2
-            elif data == "more danceable":
-                song1 = self.rc.evaluate
-                song2 = self.rc.evaluate
-
-                dance1 = commands.virtualServer.getDanceability(song1)
-                dance2 = commands.virtualServer.getDanceability(song2)
-                if q1 > q2:
-                    return song1
-                else:
-                    return song2
-            elif data == "longer":
-                song1 = self.rc.evaluate
-                song2 = self.rc.evaluate
-
-                q1 = commands.virtualServer.getLength(song1)
-                q2 = commands.virtualServer.getLength(song2)
-                if q1 > q2:
-                    return song1
-                else:
-                    return song2
-            elif data == "shorter":
-                song1 = self.rc.evaluate
-                song2 = self.rc.evaluate
-
-                q1 = commands.virtualServer.getLength(song1)
-                q2 = commands.virtualServer.getLength(song2)
-                if q1 < q2:
-                    return song1
-                else:
-                    return song2
-            elif data == "faster":
-                song1 = self.rc.evaluate
-                song2 = self.rc.evaluate
-
-                q1 = commands.virtualServer.getTempo(song1)
-                q2 = commands.virtualServer.getTempo(song2)
-                if q1 > q2:
-                    return song1
-                else:
-                    return song2
-            elif data == "slower":
-                song1 = self.rc.evaluate
-                song2 = self.rc.evaluate
-
-                q1 = commands.virtualServer.getTempo(song1)
-                q2 = commands.virtualServer.getTempo(song2)
-                if q1 < q2:
-                    return song1
-                else:
-                    return song2
+                    if q1 < q2:
+                        return song1
+                    else:
+                        return song2
+            # Poly command handling
             else:
-                return "ERROR"
+                Q = []
+                songs = self.rc.evaluate
+                for song in songs:
+                    Q.append(command(song))
+
+                if data in keywords.GREATER_KEYWORDS:
+                    return songs[Q.index(max(Q))]
+                else:
+                    return songs[Q.index(min(Q))]
+
+
 
     def __str__(self):
         # Prints a Tree (for debugging use)

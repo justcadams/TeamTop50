@@ -12,8 +12,9 @@ if __name__ == "__main__":
     commands.virtualServer.uploadCSV('TOP50', './Top50SpotifySongs2019.csv')
     print('Please upload Top50SpotifyArtists.csv')
     commands.virtualServer.uploadCSV('TOP50ARTISTS', './Top50SpotifyArtists2019.csv')
+    commands.makeCommandMap(commands.virtualServer)
+    
     go = True
-    loaded = True
     print("Enter command or type 'help'")
     while go:
         query = input("> ")
@@ -26,10 +27,7 @@ if __name__ == "__main__":
         elif query == "quit" or query == "quit()" or query == "q":
             go = False
         else:
-            if not loaded:
-                print("Need to load .csv file by typing 'load' first.")
-            else:
-                tree = parserA.parse(query)
-                output = tree.evaluate
-                print(type(output))
-                print(output)
+            tree = parserA.parse(query)
+            output = tree.evaluate
+            print(output)
+                #print("There was an error. Please try again or type 'help'")
