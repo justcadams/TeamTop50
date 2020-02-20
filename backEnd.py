@@ -764,8 +764,8 @@ class SQLBackEnd:
     # Effects:
 
     def getBirthplace(self, artistName, tableName="TOP50ARTISTS"):
-        artistName = self.findOjectByParameter(artistName, "song")
-        sqlString = "SELECT Birthplace, ArtistName FROM " + tableName + " WHERE ArtistName ='" + artistName[0] + "'"
+        artistName = self.findOjectByParameter(artistName, "artist")
+        sqlString = "SELECT Birthplace, artist FROM " + tableName + " WHERE artist ='" + artistName[0] + "'"
         query = self.currentTerminal.execute(sqlString).fetchall()
         self.currentConnection.commit()
         birthplace = query[0]
@@ -773,15 +773,15 @@ class SQLBackEnd:
             print(sqlString)
             print(query)
             print(birthplace)
-        return birthplace
+        return birthplace[0]
 
     # Requires:
     # Modifies:
     # Effects:
 
     def getBirthday(self, artistName, tableName="TOP50ARTISTS"):
-        artistName = self.findOjectByParameter(artistName, "song")
-        sqlString = "SELECT Birthday, ArtistName FROM " + tableName + " WHERE ArtistName ='" + artistName[0] + "'"
+        artistName = self.findOjectByParameter(artistName, "artist")
+        sqlString = "SELECT Birthday, artist FROM " + tableName + " WHERE artist ='" + artistName[0] + "'"
         query = self.currentTerminal.execute(sqlString).fetchall()
         self.currentConnection.commit()
         birthday = query[0]
@@ -789,7 +789,7 @@ class SQLBackEnd:
             print(sqlString)
             print(query)
             print(birthday)
-        return birthday
+        return birthday[0]
 
     # Requires:
     # Modifies:

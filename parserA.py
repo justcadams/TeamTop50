@@ -33,15 +33,18 @@ def buildTree(array):
     if len(array) == 1:
         return Tree(array[0])
     # check if first item in array is unary keyword
-    elif array[0] not in BINARY_KEYWORDS:
-        newTree = Tree(array[0])
+    elif array[0].lower() not in BINARY_KEYWORDS:
+        if array[0].lower() in KEYWORDS:
+            newTree = Tree(array[0].lower())
+        else:
+            newTree = Tree(array[0])
         array.pop(0)
         newTree.setRightChild(buildTree(array))
         return newTree
 
     # run else if binary keyword detected as first element in array
     else:
-        newTree = Tree(array[0])
+        newTree = Tree(array[0].lower())
         array.pop(0)
         # call split index function
         index = splitIndex(array, "and")
