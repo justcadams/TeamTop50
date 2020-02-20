@@ -1,23 +1,18 @@
+import os
 import os.path
-from os import path
+import regex as re
 import parserA as parserA
-import Tree
 from keywords import *
 from backEnd import SQLBackEnd
 import testCommands
 from testCommands import SQLBackEnd
 from flask import Flask
 from flask import Blueprint, render_template, request
-import threading
+
 
 
 global app
 app = Flask(__name__)
-
-
-
-
-
 
 
 @app.route('/', methods=['POST', 'GET'])
@@ -27,9 +22,10 @@ def index():
     runaround = 0
 
 
-    # if (path.exists("./server.mdf")):
-    #     os.remove("./
+
     if runaround == 0:
+        # if (os.path.exists("./server.mdf")):
+        #     os.remove("./server.mdf")
         testCommands.virtualServer = SQLBackEnd('server.mdf')
         print('Please upload Top50SpotifySongs.csv')
         testCommands.virtualServer.uploadCSV('TOP50', './Top50SpotifySongs2019.csv')
@@ -38,34 +34,45 @@ def index():
         runaround += 1
 
     if request.method == "POST":
-        try:
-            queryfromPOST = request.form['submission']
-            errors.append(queryfromPOST)
-            errors.append(type(queryfromPOST))
-            tree = parserA.parse(queryfromPOST)
-            errors.append(str(tree))
-            errors.append(type(tree))
 
-            try:
-                output = []
-                errors.append(tree.evaluate())
-                data.append(tree.evaluate())
+        queryfromPOST = request.form['submission']
+        errors.append(queryfromPOST)
+        errors.append(type(queryfromPOST))
+        tree = parserA.parse(queryfromPOST)
+        errors.append(str(tree))
+        errors.append(type(tree))
 
-            except:
-                errors.append("Broken Output Function")
-                errors.append(str(output))
-                pass
+        information = tree.evaluate
 
-            try:
-                data.append(output)
-            except:
-                errors.append("Cannot Append Output when Broken")
-                return render_template("index.html", helpWords=HELP_WORDS_LIST, query=errors)
+        if isinstance(information, int):
+            data.append(information)
+        if isinstance(information, str):
+            data.append(information.split(',')[0])
+        if isinstance(information, list):
+            data.append(information[0])
+        if isinstance(information, float):
+            data.append(information)
+
+
+
+
+        # try:
+        #     pass
+        # except:
+        #     errors.append("Broken Output Function")
+        #     errors.append(str(information))
+        #     pass
+
+        # try:
+        #     data.append(information)
+        # except:
+        #     errors.append("Cannot Append Output when Broken")
+        #     return render_template("index.html", helpWords=HELP_WORDS_LIST, query=errors)
 
             #return render_template("index.html", helpWords=HELP_WORDS_LIST, query="In Parsing Thread")
 
 
-
+        try:
             go = True
             loaded = True
 
