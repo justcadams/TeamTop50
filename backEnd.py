@@ -648,9 +648,9 @@ class SQLBackEnd:
                 message = "We can not find an artist or song that matches your search query."
                 return message
             else:
-                sqlString = "SELECT acousticness, artist FROM " + tableName + " WHERE artist ='" + artistName[0] + "'"
+                sqlString = "SELECT valence, artist FROM " + tableName + " WHERE artist ='" + artistName[0] + "'"
         else:
-            sqlString = "SELECT acousticness, song FROM " + tableName + " WHERE song ='" + songName[0] + "'"
+            sqlString = "SELECT valence, song FROM " + tableName + " WHERE song ='" + songName[0] + "'"
         query = self.currentTerminal.execute(sqlString).fetchall()
         self.currentConnection.commit()
         valence = 0
@@ -765,12 +765,12 @@ class SQLBackEnd:
 
     def getBirthplace(self, artistName, tableName="TOP50ARTISTS"):
         artistName = self.findOjectByParameter(artistName, "song")
-        SQLString = "SELECT Birthplace, ArtistName FROM " + tableName + " WHERE ArtistName ='" + artistName[0] + "'"
-        query = self.currentTerminal.execute(SQLString).fetchall()
+        sqlString = "SELECT Birthplace, ArtistName FROM " + tableName + " WHERE ArtistName ='" + artistName[0] + "'"
+        query = self.currentTerminal.execute(sqlString).fetchall()
         self.currentConnection.commit()
         birthplace = query[0]
         if (self.debug):
-            print(SQLString)
+            print(sqlString)
             print(query)
             print(birthplace)
         return birthplace
@@ -781,12 +781,12 @@ class SQLBackEnd:
 
     def getBirthday(self, artistName, tableName="TOP50ARTISTS"):
         artistName = self.findOjectByParameter(artistName, "song")
-        SQLString = "SELECT Birthday, ArtistName FROM " + tableName + " WHERE ArtistName ='" + artistName[0] + "'"
-        query = self.currentTerminal.execute(SQLString).fetchall()
+        sqlString = "SELECT Birthday, ArtistName FROM " + tableName + " WHERE ArtistName ='" + artistName[0] + "'"
+        query = self.currentTerminal.execute(sqlString).fetchall()
         self.currentConnection.commit()
         birthday = query[0]
         if (self.debug):
-            print(SQLString)
+            print(sqlString)
             print(query)
             print(birthday)
         return birthday
