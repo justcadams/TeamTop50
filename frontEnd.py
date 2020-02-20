@@ -31,4 +31,5 @@ if __name__ == "__main__":
             else:
                 tree = parserA.parse(query)
                 output = tree.evaluate
+                print(type(output))
                 print(output)
