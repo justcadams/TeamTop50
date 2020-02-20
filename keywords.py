@@ -5,7 +5,7 @@ UNARY_KEYWORDS = ["songs", "artist", "popularity",
                   "speechiness", "birthplace", "birthday"]
 
 BINARY_KEYWORDS = ["more popular", "more danceable",
-                   "longer", "faster", "slower"]
+                   "longer", "shorter", "faster", "slower"]
 
 POLY_KEYWORDS = ["longest song", "slowest song", "fastest song",
                  "most danceable", "most popular"]
@@ -30,6 +30,7 @@ WORD_HELP = {"songs": "Gets a list of songs by an artist.",
              "more popular": "Gets the more popular of two songs (separated by keyword 'and'.)",
              "more danceable": "Gets the more danceable of two songs (separated by keyword 'and'.)",
              "longer": "Gets the longer of two songs (separated by keyword 'and'.)",
+             "shorter": "Gets the shorter of two songs (separated by keyword 'and'.)",
              "faster": "Gets the faster of two songs (separated by keyword 'and'.)",
              "slower": "Gets the slower of two songs (separated by keyword 'and'.)",
              "most popular": "Gets the most popular of a list of songs.",

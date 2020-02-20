@@ -3,15 +3,15 @@ if __name__ == "__main__":
     from os import path
     import keywords
     import parserA
-    import testCommands
-    from testCommands import SQLBackEnd
+    import commands
+    from backEnd import SQLBackEnd
     if (path.exists("./server.mdf")):
         os.remove("./server.mdf")
-    testCommands.virtualServer = SQLBackEnd('server.mdf')
+    commands.virtualServer = SQLBackEnd('server.mdf')
     print('Please upload Top50SpotifySongs.csv')
-    testCommands.virtualServer.uploadCSV('TOP50', './Top50SpotifySongs2019.csv')
+    commands.virtualServer.uploadCSV('TOP50', './Top50SpotifySongs2019.csv')
     print('Please upload Top50SpotifyArtists.csv')
-    testCommands.virtualServer.uploadCSV('TOP50ARTISTS', './Top50SpotifyArtists2019.csv')
+    commands.virtualServer.uploadCSV('TOP50ARTISTS', './Top50SpotifyArtists2019.csv')
     go = True
     loaded = True
     print("Enter command or type 'help'")
