@@ -413,7 +413,7 @@ class SQLBackEnd:
             print(sqlString)
             print(query)
             print(popularity)
-        return popularity
+        return popularity[0]
 
     # Requires:
     # Modifies:
