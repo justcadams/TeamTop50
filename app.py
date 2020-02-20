@@ -1,13 +1,10 @@
-import os
-import os.path
-import regex as re
+
 import parserA as parserA
 from keywords import *
-from backEnd import SQLBackEnd
 import commands
 from commands import SQLBackEnd
 from flask import Flask
-from flask import Blueprint, render_template, request
+from flask import render_template, request
 
 
 
@@ -53,25 +50,6 @@ def index():
         if isinstance(information, float):
             data.append(information)
 
-
-
-
-        # try:
-        #     pass
-        # except:
-        #     errors.append("Broken Output Function")
-        #     errors.append(str(information))
-        #     pass
-
-        # try:
-        #     data.append(information)
-        # except:
-        #     errors.append("Cannot Append Output when Broken")
-        #     return render_template("index.html", helpWords=HELP_WORDS_LIST, query=errors)
-
-            #return render_template("index.html", helpWords=HELP_WORDS_LIST, query="In Parsing Thread")
-
-
         try:
             go = True
             loaded = True
@@ -102,11 +80,6 @@ def index():
             errors.append("Unable to process your request.")
             return render_template("index.html", helpWords=HELP_WORDS_LIST, query=errors)
     return render_template("index.html", helpWords=HELP_WORDS_LIST)
-
-
-
-
-
 
 
 if __name__ == '__main__':
