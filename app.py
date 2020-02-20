@@ -4,8 +4,8 @@ import regex as re
 import parserA as parserA
 from keywords import *
 from backEnd import SQLBackEnd
-import testCommands
-from testCommands import SQLBackEnd
+import commands
+from commands import SQLBackEnd
 from flask import Flask
 from flask import Blueprint, render_template, request
 
@@ -26,11 +26,11 @@ def index():
     if runaround == 0:
         # if (os.path.exists("./server.mdf")):
         #     os.remove("./server.mdf")
-        testCommands.virtualServer = SQLBackEnd('server.mdf')
+        commands.virtualServer = SQLBackEnd('server.mdf')
         print('Please upload Top50SpotifySongs.csv')
-        testCommands.virtualServer.uploadCSV('TOP50', './Top50SpotifySongs2019.csv')
+        commands.virtualServer.uploadCSV('TOP50', './Top50SpotifySongs2019.csv')
         print('Please upload Top50SpotifyArtists.csv')
-        testCommands.virtualServer.uploadCSV('TOP50ARTISTS', './Top50SpotifyArtists2019.csv')
+        commands.virtualServer.uploadCSV('TOP50ARTISTS', './Top50SpotifyArtists2019.csv')
         runaround += 1
 
     if request.method == "POST":
