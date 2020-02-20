@@ -791,12 +791,16 @@ class SQLBackEnd:
             print(birthday)
         return birthday[0]
 
-    # Requires:
-    # Modifies:
-    # Effects:
+    # Requires: String sqlString - String to check for SQL injection.
+    # Modifies: Nothing.
+    # Effects: Returns true if SQL injection attempts are occurring at this level of the server.
 
     def regexCheck(self):
         return False
+
+    # Requires:
+    # Modifies:
+    # Effects:
 
     def testBackEnd(self):
         # Testing SQLBackEnd class.
