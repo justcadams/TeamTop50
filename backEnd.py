@@ -773,7 +773,7 @@ class SQLBackEnd:
             print(sqlString)
             print(query)
             print(birthplace)
-        return birthplace
+        return birthplace[0]
 
     # Requires:
     # Modifies:
@@ -789,7 +789,7 @@ class SQLBackEnd:
             print(sqlString)
             print(query)
             print(birthday)
-        return birthday
+        return birthday[0]
 
     # Requires:
     # Modifies:
