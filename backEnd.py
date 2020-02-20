@@ -413,7 +413,7 @@ class SQLBackEnd:
             print(sqlString)
             print(query)
             print(popularity)
-        return popularity[0]
+        return popularity
 
     # Requires:
     # Modifies:
@@ -446,7 +446,7 @@ class SQLBackEnd:
             print(sqlString)
             print(query)
             print(danceability)
-        return danceability[0]
+        return danceability
 
     # Requires:
     # Modifies:
@@ -512,7 +512,7 @@ class SQLBackEnd:
             print(sqlString)
             print(query)
             print(length)
-        return length[0]
+        return length
 
     # Requires:
     # Modifies:
