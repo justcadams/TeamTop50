@@ -479,7 +479,7 @@ class SQLBackEnd:
             print(sqlString)
             print(query)
             print(tempo)
-        return tempo[0]
+        return tempo
 
     # Requires:
     # Modifies:
